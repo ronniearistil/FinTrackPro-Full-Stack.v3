@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function App() {
+  const [projects, setProjects] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+
+  useEffect(() => {
+    // Fetch projects
+    axios.get("http://localhost:5000/projects") // Replace with your backend URL
+      .then((response) => {
+        setProjects(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching projects:", error);
+      });
+
+    // Fetch expenses
+    axios.get("http://localhost:5000/expenses") // Replace with your backend URL
+      .then((response) => {
+        setExpenses(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching expenses:", error);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Welcome to FinTrackPro</h1>
+      <p>This is the frontend for FinTrackPro.</p>
+      <h2>Projects</h2>
+      <ul>
+        {projects.map((project) => (
+          <li key={project.id}>{project.name} - {project.status}</li>
+        ))}
+      </ul>
+      <h2>Expenses</h2>
+      <ul>
+        {expenses.map((expense) => (
+          <li key={expense.id}>
+            {expense.name} - ${expense.amount} (Project ID: {expense.project_id})
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 export default App;
+
