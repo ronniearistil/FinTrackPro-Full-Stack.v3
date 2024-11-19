@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 fake = Faker()
 app = create_app()
 
+
 def seed_users():
     """Seed the database with users."""
     default_user = User.query.filter_by(email="default@fintrackpro.com").first()
@@ -19,14 +20,13 @@ def seed_users():
         db.session.add(user)
     db.session.commit()
 
+
 def seed_projects():
     """Seed the database with projects."""
     user_ids = [user.id for user in User.query.all()]
 
     for _ in range(5):
-        # Convert start_date to a datetime object
         start_date = fake.date_this_year(before_today=True, after_today=False)
-        start_date = datetime.strptime(start_date, "%Y-%m-%d")
         end_date = start_date + timedelta(days=fake.random_int(min=1, max=30))
 
         project = Project(
@@ -37,16 +37,21 @@ def seed_projects():
             actual_revenue=fake.random_number(digits=5),
             projected_profit=fake.random_number(digits=5),
             actual_profit=fake.random_number(digits=5),
-            status=fake.random_element(elements=('In Progress', 'Completed', 'At Risk')),
-            start_date=start_date,
+            status=fake.random_element(
+                elements=("In Progress", "Completed", "At Risk")
+            ),
+            start_date=start_date,  # Use start_date directly
             end_date=end_date,
             project_manager=fake.name(),
-            category=fake.random_element(elements=('Category A', 'Category B', 'Category C')),
+            category=fake.random_element(
+                elements=("Category A", "Category B", "Category C")
+            ),
             progress_percentage=fake.random_int(min=0, max=100),
             user_id=fake.random_element(elements=user_ids),
         )
         db.session.add(project)
     db.session.commit()
+
 
 def seed_expenses():
     """Seed the database with expenses."""
@@ -56,30 +61,16 @@ def seed_expenses():
         expense = Expense(
             name=fake.word(),
             amount=fake.random_number(digits=4),
-            category=fake.random_element(elements=('Labor', 'Materials', 'Miscellaneous')),
             project_id=fake.random_element(elements=project_ids),
         )
         db.session.add(expense)
     db.session.commit()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     with app.app_context():
-        db.create_all()  # Ensure tables are created
+        db.create_all()
         seed_users()
         seed_projects()
         seed_expenses()
         print("Database seeded successfully!")
-
-
-
-
-
-
-
-
-
-
-
-
-
-

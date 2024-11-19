@@ -2,12 +2,20 @@ from app import db
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(45), nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
     projects = db.relationship('Project', back_populates='owner', lazy='dynamic')
 
     def __repr__(self):
         return f"<User {self.name}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "project_count": self.projects.count()
+        }
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,6 +41,18 @@ class Project(db.Model):
     def __repr__(self):
         return f"<Project {self.name}>"
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "budgeted_cost": self.budgeted_cost,
+            "actual_cost": self.actual_cost,
+            "status": self.status,
+            "start_date": self.start_date.strftime("%Y-%m-%d") if self.start_date else None,
+            "end_date": self.end_date.strftime("%Y-%m-%d") if self.end_date else None,
+            "user_id": self.user_id,
+        }
+
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -43,6 +63,17 @@ class Expense(db.Model):
 
     def __repr__(self):
         return f"<Expense {self.name} - {self.amount}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "amount": self.amount,
+            "category": self.category,
+            "project_id": self.project_id
+        }
+
+
 
 
 
