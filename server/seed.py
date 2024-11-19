@@ -1,7 +1,7 @@
 from app import db, create_app
 from models import User, Project, Expense
 from faker import Faker
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 fake = Faker()
 app = create_app()
@@ -24,7 +24,9 @@ def seed_projects():
     user_ids = [user.id for user in User.query.all()]
 
     for _ in range(5):
-        start_date = fake.date_this_year()
+        # Convert start_date to a datetime object
+        start_date = fake.date_this_year(before_today=True, after_today=False)
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
         end_date = start_date + timedelta(days=fake.random_int(min=1, max=30))
 
         project = Project(
@@ -62,11 +64,16 @@ def seed_expenses():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        db.create_all()  # Ensure tables are created
         seed_users()
         seed_projects()
         seed_expenses()
-        print("Database seeded with users, projects, and expenses!")
+        print("Database seeded successfully!")
+
+
+
+
+
 
 
 

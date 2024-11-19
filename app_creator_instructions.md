@@ -15,4 +15,9 @@ Or
 - export FLASK_APP=app.py
 - flask db init
 - flask db migrate -m "Initial migration"
-- flask db upgrade
+
+Run Python App
+- python app.py
+
+Run Seed.py
+- python seed.py
