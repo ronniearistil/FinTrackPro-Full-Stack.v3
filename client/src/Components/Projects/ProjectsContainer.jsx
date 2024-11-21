@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useProjects } from '../../ProjectContext';
-import ProjectCard from '../Projects/ProjectCard';
+import ProjectCard from './ProjectCard';
 import { Button } from '@mui/material';
 
 const ProjectsContainer = ({ searchTerm = '', statusFilter = '', sortOption = '' }) => {
-    const { projects, archiveProject } = useProjects(); // Access archiveProject logic if needed
+    const { projects, archiveProject } = useProjects();
     const [filteredProjects, setFilteredProjects] = useState([]);
     const [showArchived, setShowArchived] = useState(false);
 
@@ -22,7 +22,7 @@ const ProjectsContainer = ({ searchTerm = '', statusFilter = '', sortOption = ''
                 project.id.toString().includes(searchTerm);
 
             const matchesStatus =
-                statusFilter === 'All' || statusFilter === '' || project.status === statusFilter;
+                !statusFilter || statusFilter === 'All' || project.status === statusFilter;
 
             const matchesArchiveStatus = showArchived
                 ? project.status === 'Archived'
@@ -40,13 +40,13 @@ const ProjectsContainer = ({ searchTerm = '', statusFilter = '', sortOption = ''
                     case 'nameDesc':
                         return b.name.localeCompare(a.name);
                     case 'profitHigh':
-                        return b.profit - a.profit;
+                        return (b.actual_profit || 0) - (a.actual_profit || 0);
                     case 'profitLow':
-                        return a.profit - b.profit;
+                        return (a.actual_profit || 0) - (b.actual_profit || 0);
                     case 'costHigh':
-                        return b.cost - a.cost;
+                        return (b.budgeted_cost || 0) - (a.budgeted_cost || 0);
                     case 'costLow':
-                        return a.cost - b.cost;
+                        return (a.budgeted_cost || 0) - (b.budgeted_cost || 0);
                     default:
                         return 0;
                 }
@@ -71,7 +71,7 @@ const ProjectsContainer = ({ searchTerm = '', statusFilter = '', sortOption = ''
                     <ProjectCard
                         key={project.id}
                         project={project}
-                        onArchive={() => archiveProject(project.id)} // Pass archive logic if needed
+                        onArchive={() => archiveProject(project.id)} // Archive functionality
                     />
                 ))
             ) : (
@@ -82,3 +82,4 @@ const ProjectsContainer = ({ searchTerm = '', statusFilter = '', sortOption = ''
 };
 
 export default ProjectsContainer;
+

@@ -6,6 +6,10 @@ import ProjectsContainer from './Components/Projects/ProjectsContainer.jsx';
 import ExpensesContainer from './Components/Expenses/ExpensesContainer.jsx';
 import UsersContainer from './Components/Users/UsersContainer.jsx';
 import Footer from './Components/Layout/Footer.jsx';
+import AboutUs from './Components/AboutUs.jsx'; // Import AboutUs component
+import ProjectForm from './Components/Forms/ProjectForm.jsx'; // Import ProjectForm
+import ExpenseForm from './Components/Forms/ExpenseForm.jsx'; // Import ExpenseForm
+import SignUpForm from './Components/Forms/SignUpForm.jsx'; // Import SignUpForm
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import theme from './theme.jsx';
@@ -17,15 +21,16 @@ const App = () => {
   const [projects, setProjects] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [users, setUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sortOption, setSortOption] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Toast notifications for feedback
   const showToast = (message, type = 'success') => {
     toast[type](message);
   };
 
-  // Fetch all data on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -48,6 +53,10 @@ const App = () => {
     fetchData();
   }, []);
 
+  const handleSearch = (term) => setSearchTerm(term);
+  const handleStatusFilter = (status) => setStatusFilter(status);
+  const handleSort = (option) => setSortOption(option);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
@@ -59,7 +68,9 @@ const App = () => {
           <ToastContainer position="top-right" autoClose={3000} />
           <Header />
           <NavBar
-            // Add necessary callback props for filtering/searching if applicable
+            onSearch={handleSearch}
+            onStatusFilter={handleStatusFilter}
+            onSort={handleSort}
           />
           <Routes>
             <Route path="/" element={<Navigate to="/projects" />} />
@@ -68,7 +79,10 @@ const App = () => {
               element={
                 <ProjectsContainer
                   projects={projects}
-                  showToast={showToast} // Pass down feedback capability
+                  searchTerm={searchTerm}
+                  statusFilter={statusFilter}
+                  sortOption={sortOption}
+                  showToast={showToast}
                 />
               }
             />
@@ -77,15 +91,18 @@ const App = () => {
               element={
                 <ExpensesContainer
                   expenses={expenses}
-                  showToast={showToast} // For feedback when editing or archiving
+                  searchTerm={searchTerm}
+                  showToast={showToast}
                 />
               }
             />
-            <Route
-              path="/users"
-              element={<UsersContainer users={users} />}
-            />
+            <Route path="/users" element={<UsersContainer users={users} />} />
+            <Route path="/projects/new" element={<ProjectForm />} />
+            <Route path="/expenses/new" element={<ExpenseForm />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="*" element={<h2>Page Not Found</h2>} />
+            <Route path="/" element={<Navigate to="/projects" />} />
+            <Route path="/signup" element={<SignUpForm />} />
           </Routes>
           <Footer />
         </div>
@@ -95,6 +112,8 @@ const App = () => {
 };
 
 export default App;
+
+
 
 
 

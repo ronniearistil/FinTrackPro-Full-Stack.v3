@@ -75,6 +75,20 @@ export const ProjectProvider = ({ children }) => {
       console.error('Error editing expense:', error);
     }
   };
+// Add User
+const addUser = async (newUser) => {
+    try {
+      const response = await axios.post(USERS_URL, newUser);
+      if (response.status === 201) {
+        setUsers((prev) => [...prev, response.data]);
+        console.log('User added:', response.data);
+      } else {
+        console.error('Unexpected response:', response);
+      }
+    } catch (error) {
+      console.error('Error adding user:', error.response || error.message);
+    }
+  };
 
   return (
     <ProjectContext.Provider
@@ -94,5 +108,6 @@ export const ProjectProvider = ({ children }) => {
 };
 
 export const useProjects = () => useContext(ProjectContext);
+
 
 

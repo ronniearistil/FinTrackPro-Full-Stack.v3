@@ -1,11 +1,26 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, InputBase, Box, MenuItem, Select, FormControl } from '@mui/material';
+import {
+    AppBar,
+    Toolbar,
+    InputBase,
+    Box,
+    Menu,
+    MenuItem,
+    IconButton,
+    Select,
+    FormControl,
+} from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import NavLink from './NavLink';
 
 const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [status, setStatus] = useState('');
     const [sortOption, setSortOption] = useState('');
+    const [anchorEl, setAnchorEl] = useState(null); // State for user dropdown menu
+
+    const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+    const handleMenuClose = () => setAnchorEl(null);
 
     const handleSearchChange = (e) => {
         const value = e.target.value;
@@ -34,6 +49,7 @@ const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
                     <NavLink to="/expenses">Expenses</NavLink>
                     <NavLink to="/expenses/new">Add Expense</NavLink>
                     <NavLink to="/users">Users</NavLink>
+                    <NavLink to="/about">About Us</NavLink>
                 </Box>
 
                 <Box
@@ -94,6 +110,33 @@ const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
                             <MenuItem value="costLow">Cost (Low to High)</MenuItem>
                         </Select>
                     </FormControl>
+
+                    {/* User Account Dropdown */}
+                    <IconButton onClick={handleMenuOpen} sx={{ color: 'white' }}>
+                        <AccountCircleIcon />
+                    </IconButton>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                    >
+                        <MenuItem onClick={handleMenuClose}>
+                            <NavLink to="/signup">Sign Up</NavLink>
+                        </MenuItem>
+                        <NavLink to="/signup" sx={{ color: 'white' }}>
+                            Sign Up
+                        </NavLink>
+                        <NavLink to="/login" sx={{ color: 'white' }}>
+                            Log In
+                        </NavLink>
+
+                        <MenuItem onClick={handleMenuClose}>
+                            <NavLink to="/signin">Sign In</NavLink>
+                        </MenuItem>
+                        <MenuItem onClick={handleMenuClose}>
+                            <NavLink to="/signout">Sign Out</NavLink>
+                        </MenuItem>
+                    </Menu>
                 </Box>
             </Toolbar>
         </AppBar>
@@ -101,5 +144,6 @@ const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
 };
 
 export default NavBar;
+
 
 

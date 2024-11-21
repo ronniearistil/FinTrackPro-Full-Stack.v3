@@ -4,27 +4,29 @@ import ExpenseCard from './ExpenseCard';
 import { Button } from '@mui/material';
 
 const ExpensesContainer = ({ searchTerm = '' }) => {
-    const { expenses, projects } = useProjects();
+    const { expenses, projects } = useProjects(); // Access expenses and projects from context
     const [filteredExpenses, setFilteredExpenses] = useState([]);
     const [showArchived, setShowArchived] = useState(false);
 
+    // Toggle visibility of archived expenses
     const toggleArchived = () => setShowArchived((prev) => !prev);
 
     useEffect(() => {
         const lowerCasedSearchTerm = searchTerm?.toLowerCase() || '';
 
         const visibleExpenses = expenses.filter((expense) => {
-            // Safely find the associated project name
+            // Find the associated project name
             const associatedProject = projects?.find(
-                (project) => project.id === expense?.projectId
+                (project) => project.id === expense.project_id
             )?.name || '';
 
-            // Check if the search term matches expense name, project name, or project ID
-            const matchesName = expense?.name?.toLowerCase()?.includes(lowerCasedSearchTerm);
-            const matchesProjectName = associatedProject?.toLowerCase()?.includes(lowerCasedSearchTerm);
-            const matchesProjectId = expense?.projectId?.toString()?.includes(searchTerm);
+            // Check if the search term matches any of the fields
+            const matchesName = expense.name.toLowerCase().includes(lowerCasedSearchTerm);
+            const matchesProjectName = associatedProject.toLowerCase().includes(lowerCasedSearchTerm);
+            const matchesProjectId = expense.project_id.toString().includes(searchTerm);
 
-            const matchesArchiveStatus = showArchived ? expense?.archived : !expense?.archived;
+            // Match archive status
+            const matchesArchiveStatus = showArchived ? expense.archived : !expense.archived;
 
             return matchesArchiveStatus && (matchesName || matchesProjectName || matchesProjectId);
         });
@@ -50,4 +52,5 @@ const ExpensesContainer = ({ searchTerm = '' }) => {
 };
 
 export default ExpensesContainer;
+
 

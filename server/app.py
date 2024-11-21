@@ -1,15 +1,18 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_cors import CORS
-from sqlalchemy.sql import text  # Import SQLAlchemy's text for raw SQL queries
-from sqlalchemy import MetaData
+from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
+from sqlalchemy.sql import text
 
 # Initialize Extensions
 db = SQLAlchemy()
 migrate = Migrate()
 api = Api()
+ma = Marshmallow()  # Initialize Marshmallow
+bcrypt = Bcrypt()   # Initialize Bcrypt
 
 def create_app():
     app = Flask(__name__)
@@ -21,6 +24,8 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     api.init_app(app)
+    ma.init_app(app)  # Attach Marshmallow to the app
+    bcrypt.init_app(app)  # Attach Bcrypt to the app
     CORS(app)
 
     # Health check route
@@ -32,7 +37,7 @@ def create_app():
         except Exception as e:
             return {"error": "Database connection failed", "details": str(e)}, 500
 
-    # Import routes from a separate file
+    # Import routes
     from routes import register_routes
     register_routes(app)
 
@@ -41,6 +46,11 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     app.run(debug=True, port=5555)
+
+
+
+
+
 
 
 

@@ -1,4 +1,4 @@
-// src/components/Footer.jsx
+// src/Components/Footer.jsx
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link for navigation
 
