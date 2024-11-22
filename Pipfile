@@ -7,6 +7,10 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-restful = "*"
 flask-cors = "*"
+flask-marshmallow = "*"
+flask-bcrypt = "*"
+sqlalchemy = "*"
+marshmallow-sqlalchemy = "*"
 faker = "*"
 
 [dev-packages]

@@ -22,7 +22,7 @@ const Header = () => (
           cursor: 'pointer', // Change cursor to pointer
         }}
       >
-        FinTrackFlow
+        FinTrackPro
       </Typography>
     </Link>
   </Box>

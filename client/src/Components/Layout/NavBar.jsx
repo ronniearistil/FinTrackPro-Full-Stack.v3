@@ -1,25 +1,15 @@
 import React, { useState } from 'react';
-import {
-    AppBar,
-    Toolbar,
-    InputBase,
-    Box,
-    Menu,
-    MenuItem,
-    IconButton,
-    Select,
-    FormControl,
-} from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { AppBar, Toolbar, Box, IconButton, Menu, MenuItem, Typography, InputBase, Select, FormControl } from '@mui/material';
+import { AccountCircle } from '@mui/icons-material';
 import NavLink from './NavLink';
 
-const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
+const NavBar = ({ onSearch, onStatusFilter, onSort, onSignOut, onLogin, onSignUp }) => {
+    const [anchorEl, setAnchorEl] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [status, setStatus] = useState('');
     const [sortOption, setSortOption] = useState('');
-    const [anchorEl, setAnchorEl] = useState(null); // State for user dropdown menu
 
-    const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+    const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
 
     const handleSearchChange = (e) => {
@@ -43,15 +33,16 @@ const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
     return (
         <AppBar position="static" sx={{ bgcolor: '#2a9d8f', mb: 2 }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
+                {/* Navigation Links */}
                 <Box sx={{ display: 'flex', gap: 2 }}>
                     <NavLink to="/projects">Projects</NavLink>
                     <NavLink to="/projects/new">Add Project</NavLink>
                     <NavLink to="/expenses">Expenses</NavLink>
                     <NavLink to="/expenses/new">Add Expense</NavLink>
-                    <NavLink to="/users">Users</NavLink>
                     <NavLink to="/about">About Us</NavLink>
                 </Box>
 
+                {/* Search, Filter, and Sort */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -110,32 +101,21 @@ const NavBar = ({ onSearch, onStatusFilter, onSort }) => {
                             <MenuItem value="costLow">Cost (Low to High)</MenuItem>
                         </Select>
                     </FormControl>
+                </Box>
 
-                    {/* User Account Dropdown */}
-                    <IconButton onClick={handleMenuOpen} sx={{ color: 'white' }}>
-                        <AccountCircleIcon />
+                {/* User Account Menu */}
+                <Box>
+                    <IconButton onClick={handleMenuOpen}>
+                        <AccountCircle fontSize="large" sx={{ color: 'white' }} />
                     </IconButton>
                     <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
                     >
-                        <MenuItem onClick={handleMenuClose}>
-                            <NavLink to="/signup">Sign Up</NavLink>
-                        </MenuItem>
-                        <NavLink to="/signup" sx={{ color: 'white' }}>
-                            Sign Up
-                        </NavLink>
-                        <NavLink to="/login" sx={{ color: 'white' }}>
-                            Log In
-                        </NavLink>
-
-                        <MenuItem onClick={handleMenuClose}>
-                            <NavLink to="/signin">Sign In</NavLink>
-                        </MenuItem>
-                        <MenuItem onClick={handleMenuClose}>
-                            <NavLink to="/signout">Sign Out</NavLink>
-                        </MenuItem>
+                        <MenuItem onClick={onSignUp}>Sign Up</MenuItem>
+                        <MenuItem onClick={onLogin}>Sign In</MenuItem>
+                        <MenuItem onClick={onSignOut}>Logout</MenuItem>
                     </Menu>
                 </Box>
             </Toolbar>

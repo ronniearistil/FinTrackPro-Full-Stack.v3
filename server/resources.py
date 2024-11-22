@@ -56,6 +56,39 @@ class UserResource(Resource):
             return {"error": "Failed to update user", "details": str(e)}, 500
 
 
+from flask_restful import Resource
+from flask import request, jsonify
+from models import User
+from app import db, bcrypt
+
+class LoginResource(Resource):
+    def post(self):
+        """Authenticate a user with email and password."""
+        data = request.get_json()
+
+        # Validate that email and password are provided
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            return {"error": "Email and password are required."}, 400
+
+        # Query user by email
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return {"error": "Invalid email or password."}, 401
+
+        # Check password
+        if not user.check_password(password):
+            return {"error": "Invalid email or password."}, 401
+
+        # Success: return user details
+        return {
+            "message": "Login successful",
+            "user": user.to_dict()
+        }, 200
+
+
 class ProjectResource(Resource):
     def get(self, project_id=None):
         """Retrieve a project by ID or all projects."""

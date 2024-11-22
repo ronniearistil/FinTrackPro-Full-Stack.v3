@@ -62,4 +62,5 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
         """Ensure category is not empty."""
         if not value or value.strip() == "":
             raise ValidationError("Category cannot be empty.")
+        return value
 
