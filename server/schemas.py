@@ -8,8 +8,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = User
         include_relationships = True
-        load_instance = True
-        exclude = ("password_hash",)
+        load_instance = False  # Ensure it returns a dictionary
+        exclude = ("password_hash",)  # Prevent password_hash from being exposed
 
     password = fields.String(
         load_only=True,

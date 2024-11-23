@@ -19,24 +19,48 @@ class UserResource(Resource):
         return {"users": [u.to_dict() for u in users]}, 200
 
 
+class UserResource(Resource):
+    def get(self, user_id=None):
+        if user_id:
+            user = User.query.get_or_404(user_id)
+            return {"user": user.to_dict()}, 200
+        users = User.query.all()
+        return {"users": [u.to_dict() for u in users]}, 200
+
     def post(self):
-        user_schema = UserSchema()
         try:
+            # Parse the incoming JSON data
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
+
+            # Validate and deserialize the data
+            user_schema = UserSchema()
             user_data = user_schema.load(data)
+
+            # Remove 'password' from user_data and handle it separately
+            password = user_data.pop('password', None)
+            if not password:
+                return {"error": "Password is required"}, 400
+
+            # Create the User instance
             user = User(**user_data)
-            if 'password' in user_data:
-                user.set_password(user_data['password'])
+            user.set_password(password)
+
+            # Save to the database
             db.session.add(user)
             db.session.commit()
+
+            # Return the created user
             return user_schema.dump(user), 201
+
         except ValidationError as err:
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create user", "details": str(e)}, 500
+
+
 
     def delete(self, user_id):
         user = User.query.get_or_404(user_id)
