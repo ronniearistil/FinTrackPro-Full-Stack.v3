@@ -95,3 +95,6 @@ Ensure the backend is running before starting the frontend to connect properly.
 
 # Package Check Commend
 npm list --depth=0
+
+# To confirm routes are running:
+- flask routes

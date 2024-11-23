@@ -10,7 +10,7 @@ import os
 load_dotenv()
 
 # Import extensions
-from extensions import db, migrate, api, ma, bcrypt
+from extensions import db, migrate, ma, bcrypt
 
 # Application Factory Function
 def create_app(config_name="default"):

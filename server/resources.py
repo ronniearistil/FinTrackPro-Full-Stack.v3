@@ -9,12 +9,15 @@ from extensions import db  # Import db from extensions
 
 class UserResource(Resource):
     def get(self, user_id=None):
-        user_schema = UserSchema()
+        print("UserResource GET called")
         if user_id:
             user = User.query.get_or_404(user_id)
-            return user_schema.dump(user), 200
+            print(f"User found: {user}")
+            return {"user": user.to_dict()}, 200
         users = User.query.all()
-        return user_schema.dump(users, many=True), 200
+        print(f"All users: {users}")
+        return {"users": [u.to_dict() for u in users]}, 200
+
 
     def post(self):
         user_schema = UserSchema()
