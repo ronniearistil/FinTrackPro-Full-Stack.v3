@@ -28,11 +28,16 @@ class ProjectSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Project
         include_relationships = True
-        load_instance = True
+        load_instance = False  # Always return a dictionary
 
-    user_id = fields.Integer(required=True, validate=validate.Range(min=1, error="Invalid user_id"))
-    budgeted_cost = fields.Float(required=True, validate=validate.Range(min=0, error="Budgeted cost must be non-negative"))
-    actual_cost = fields.Float(validate=validate.Range(min=0, error="Actual cost must be non-negative"))
+    # Fields
+    name = fields.String(required=True, validate=validate.Length(min=1))
+    budgeted_cost = fields.Float(required=True, validate=validate.Range(min=0))
+    actual_cost = fields.Float(validate=validate.Range(min=0))
+    status = fields.String(required=True, validate=validate.OneOf(["In Progress", "Completed", "At Risk"]))
+    start_date = fields.Date(required=True)
+    end_date = fields.Date(allow_none=True)
+    user_id = fields.Integer(required=True, validate=validate.Range(min=1))
 
     @validates("status")
     def validate_status(self, value):

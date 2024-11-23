@@ -18,7 +18,6 @@ class UserResource(Resource):
         print(f"All users: {users}")
         return {"users": [u.to_dict() for u in users]}, 200
 
-
 class UserResource(Resource):
     def get(self, user_id=None):
         if user_id:
@@ -59,7 +58,6 @@ class UserResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create user", "details": str(e)}, 500
-
 
 
     def delete(self, user_id):
@@ -116,22 +114,39 @@ class ProjectResource(Resource):
         projects = Project.query.all()
         return project_schema.dump(projects, many=True), 200
 
+class ProjectResource(Resource):
     def post(self):
         project_schema = ProjectSchema()
         try:
+            # Parse JSON request
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
+
+            # Deserialize and validate the payload
             project_data = project_schema.load(data)
+
+            # Check if the user_id exists
+            user = User.query.get(project_data["user_id"])
+            if not user:
+                return {"error": "User not found"}, 404
+
+            # Create the project instance
             project = Project(**project_data)
+
+            # Save to the database
             db.session.add(project)
             db.session.commit()
+
+            # Return the created project
             return project_schema.dump(project), 201
+
         except ValidationError as err:
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create project", "details": str(e)}, 500
+
 
     def delete(self, project_id):
         project = Project.query.get_or_404(project_id)
