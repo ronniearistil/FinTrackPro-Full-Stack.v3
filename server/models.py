@@ -1,6 +1,5 @@
 from app import db, bcrypt
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45), nullable=False)
@@ -16,6 +15,7 @@ class User(db.Model):
         return f"<User {self.name}>"
 
     def to_dict(self):
+        """Convert User instance to dictionary."""
         return {
             "id": self.id,
             "name": self.name,
@@ -24,7 +24,7 @@ class User(db.Model):
             "is_active": self.is_active,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S") if self.created_at else None,
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S") if self.updated_at else None,
-            "project_count": self.projects.count()
+            "projects": [project.id for project in self.projects]  # Only return project IDs for simplicity
         }
 
     def set_password(self, password):
@@ -61,6 +61,7 @@ class Project(db.Model):
         return f"<Project {self.name}>"
 
     def to_dict(self):
+        """Convert Project instance to dictionary."""
         return {
             "id": self.id,
             "name": self.name,
@@ -79,7 +80,7 @@ class Project(db.Model):
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S") if self.updated_at else None,
             "project_manager": self.project_manager,
             "user_id": self.user_id,
-            "expenses": [expense.to_dict() for expense in self.expenses],
+            "expenses": [expense.id for expense in self.expenses]  # Only return expense IDs for simplicity
         }
 
 
@@ -97,6 +98,7 @@ class Expense(db.Model):
         return f"<Expense {self.name} - {self.amount}>"
 
     def to_dict(self):
+        """Convert Expense instance to dictionary."""
         return {
             "id": self.id,
             "name": self.name,
@@ -106,6 +108,7 @@ class Expense(db.Model):
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S") if self.created_at else None,
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S") if self.updated_at else None
         }
+
 
 
 

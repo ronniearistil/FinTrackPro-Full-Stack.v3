@@ -3,7 +3,6 @@ from flask import request, jsonify
 from marshmallow import ValidationError
 from models import User, Project, Expense
 from schemas import UserSchema, ProjectSchema, ExpenseSchema
-from app import db
 
 # Initialize schemas
 user_schema = UserSchema()
@@ -54,12 +53,6 @@ class UserResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update user", "details": str(e)}, 500
-
-
-from flask_restful import Resource
-from flask import request, jsonify
-from models import User
-from app import db, bcrypt
 
 class LoginResource(Resource):
     def post(self):

@@ -18,12 +18,12 @@ const Footer = () => (
                 Connect on LinkedIn
             </a>
             <a href="mailto:contact@fintrackpro.com">Email Us</a>
-            <a
+            <agit
                 href="https://twitter.com/yourusername"
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                Follow us on Twitter
+                Follow us on Twittergit@github.com:ronniearistil/FinTrackPro_Ph4_Full_Stack.git
             </a>
         </div>
     </footer>
