@@ -1,24 +1,18 @@
+# app.py
+
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_restful import Api
 from flask_cors import CORS
-from flask_marshmallow import Marshmallow
-from flask_bcrypt import Bcrypt
-from sqlalchemy.sql import text
 from dotenv import load_dotenv
+from sqlalchemy.sql import text
 import os
 
 # Load environment variables
 load_dotenv()
 
-# Initialize Extensions
-db = SQLAlchemy()
-migrate = Migrate()
-api = Api()
-ma = Marshmallow()
-bcrypt = Bcrypt()
+# Import extensions
+from extensions import db, migrate, api, ma, bcrypt
 
+# Application Factory Function
 def create_app(config_name="default"):
     app = Flask(__name__)
 
@@ -26,20 +20,26 @@ def create_app(config_name="default"):
     from config import config
     app.config.from_object(config[config_name])
 
+    # Ensure SQLite database URI is set if not already specified
+    if not app.config.get("SQLALCHEMY_DATABASE_URI"):
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/app.db"
+
     # Initialize extensions with the app
     db.init_app(app)
     migrate.init_app(app, db)
-    api.init_app(app)
     ma.init_app(app)
     bcrypt.init_app(app)
-    CORS(app, resources={r"/*": {"origins": app.config["CORS_ALLOWED_ORIGINS"]}})
+
+    # Set up CORS
+    CORS_ALLOWED_ORIGINS = app.config.get("CORS_ALLOWED_ORIGINS", "*")
+    CORS(app, resources={r"/*": {"origins": CORS_ALLOWED_ORIGINS}})
 
     # Health check route
     @app.route("/")
     def home():
         try:
             db.session.execute(text("SELECT 1"))
-            return {"message": "Welcome to FinTrackPro Backend - Database Connected"}
+            return {"message": "Welcome to FinTrackPro Backend - Database Connected"}, 200
         except Exception as e:
             return {"error": "Database connection failed", "details": str(e)}, 500
 
@@ -49,9 +49,13 @@ def create_app(config_name="default"):
 
     return app
 
+# Entry point for the application
 if __name__ == "__main__":
+    # Create app with the specified environment or default to "default"
     app = create_app(os.getenv("FLASK_ENV", "default"))
     app.run(debug=app.config["DEBUG"], port=5555)
+
+
 
 
 

@@ -1,17 +1,15 @@
+# resources.py
+
 from flask_restful import Resource
 from flask import request, jsonify
 from marshmallow import ValidationError
 from models import User, Project, Expense
 from schemas import UserSchema, ProjectSchema, ExpenseSchema
-
-# Initialize schemas
-user_schema = UserSchema()
-project_schema = ProjectSchema()
-expense_schema = ExpenseSchema()
+from extensions import db  # Import db from extensions
 
 class UserResource(Resource):
     def get(self, user_id=None):
-        """Retrieve a user by ID or all users."""
+        user_schema = UserSchema()
         if user_id:
             user = User.query.get_or_404(user_id)
             return user_schema.dump(user), 200
@@ -19,72 +17,72 @@ class UserResource(Resource):
         return user_schema.dump(users, many=True), 200
 
     def post(self):
-        """Create a new user."""
+        user_schema = UserSchema()
         try:
-            data = user_schema.load(request.get_json())
-            user = User(**data)
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
+            user_data = user_schema.load(data)
+            user = User(**user_data)
+            if 'password' in user_data:
+                user.set_password(user_data['password'])
             db.session.add(user)
             db.session.commit()
             return user_schema.dump(user), 201
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create user", "details": str(e)}, 500
 
     def delete(self, user_id):
-        """Delete a user by ID."""
         user = User.query.get_or_404(user_id)
         db.session.delete(user)
         db.session.commit()
         return {"message": "User deleted successfully"}, 204
 
     def patch(self, user_id):
-        """Update user information."""
+        user_schema = UserSchema()
         user = User.query.get_or_404(user_id)
         try:
-            data = user_schema.load(request.get_json(), partial=True)
-            for key, value in data.items():
-                setattr(user, key, value)
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
+            user_data = user_schema.load(data, partial=True)
+            for key, value in user_data.items():
+                if key == 'password':
+                    user.set_password(value)
+                else:
+                    setattr(user, key, value)
             db.session.commit()
             return user_schema.dump(user), 200
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update user", "details": str(e)}, 500
 
 class LoginResource(Resource):
     def post(self):
-        """Authenticate a user with email and password."""
         data = request.get_json()
-
-        # Validate that email and password are provided
         email = data.get("email")
         password = data.get("password")
 
         if not email or not password:
             return {"error": "Email and password are required."}, 400
 
-        # Query user by email
         user = User.query.filter_by(email=email).first()
-        if not user:
+        if not user or not user.check_password(password):
             return {"error": "Invalid email or password."}, 401
 
-        # Check password
-        if not user.check_password(password):
-            return {"error": "Invalid email or password."}, 401
-
-        # Success: return user details
         return {
             "message": "Login successful",
             "user": user.to_dict()
         }, 200
 
-
 class ProjectResource(Resource):
     def get(self, project_id=None):
-        """Retrieve a project by ID or all projects."""
+        project_schema = ProjectSchema()
         if project_id:
             project = Project.query.get_or_404(project_id)
             return project_schema.dump(project), 200
@@ -92,45 +90,49 @@ class ProjectResource(Resource):
         return project_schema.dump(projects, many=True), 200
 
     def post(self):
-        """Create a new project."""
+        project_schema = ProjectSchema()
         try:
-            data = project_schema.load(request.get_json())
-            project = Project(**data)
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
+            project_data = project_schema.load(data)
+            project = Project(**project_data)
             db.session.add(project)
             db.session.commit()
             return project_schema.dump(project), 201
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create project", "details": str(e)}, 500
 
     def delete(self, project_id):
-        """Delete a project by ID."""
         project = Project.query.get_or_404(project_id)
         db.session.delete(project)
         db.session.commit()
         return {"message": "Project deleted successfully"}, 204
 
     def patch(self, project_id):
-        """Update project information."""
+        project_schema = ProjectSchema()
         project = Project.query.get_or_404(project_id)
         try:
-            data = project_schema.load(request.get_json(), partial=True)
-            for key, value in data.items():
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
+            project_data = project_schema.load(data, partial=True)
+            for key, value in project_data.items():
                 setattr(project, key, value)
             db.session.commit()
             return project_schema.dump(project), 200
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update project", "details": str(e)}, 500
 
-
 class ExpenseResource(Resource):
     def get(self, expense_id=None):
-        """Retrieve an expense by ID or all expenses."""
+        expense_schema = ExpenseSchema()
         if expense_id:
             expense = Expense.query.get_or_404(expense_id)
             return expense_schema.dump(expense), 200
@@ -138,37 +140,43 @@ class ExpenseResource(Resource):
         return expense_schema.dump(expenses, many=True), 200
 
     def post(self):
-        """Create a new expense."""
+        expense_schema = ExpenseSchema()
         try:
-            data = expense_schema.load(request.get_json())
-            expense = Expense(**data)
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
+            expense_data = expense_schema.load(data)
+            expense = Expense(**expense_data)
             db.session.add(expense)
             db.session.commit()
             return expense_schema.dump(expense), 201
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create expense", "details": str(e)}, 500
 
     def delete(self, expense_id):
-        """Delete an expense by ID."""
         expense = Expense.query.get_or_404(expense_id)
         db.session.delete(expense)
         db.session.commit()
         return {"message": "Expense deleted successfully"}, 204
 
     def patch(self, expense_id):
-        """Update expense information."""
+        expense_schema = ExpenseSchema()
         expense = Expense.query.get_or_404(expense_id)
         try:
-            data = expense_schema.load(request.get_json(), partial=True)
-            for key, value in data.items():
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
+            expense_data = expense_schema.load(data, partial=True)
+            for key, value in expense_data.items():
                 setattr(expense, key, value)
             db.session.commit()
             return expense_schema.dump(expense), 200
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update expense", "details": str(e)}, 500
+

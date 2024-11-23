@@ -2,8 +2,10 @@ import os
 
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "defaultsecretkey")
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///instance/app.db") 
-    """added instance/"""
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL",
+        f"sqlite:///{os.path.join(os.path.abspath(os.getcwd()), 'instance', 'app.db')}"
+    )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "*")
     DEBUG = False
