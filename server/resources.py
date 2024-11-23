@@ -166,22 +166,34 @@ class ExpenseResource(Resource):
         expenses = Expense.query.all()
         return expense_schema.dump(expenses, many=True), 200
 
+class ExpenseResource(Resource):
     def post(self):
         expense_schema = ExpenseSchema()
         try:
+            # Parse and validate the incoming JSON
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
+
+            # Load and validate data using the schema
             expense_data = expense_schema.load(data)
+
+            # Create a new Expense instance
             expense = Expense(**expense_data)
+
+            # Save to the database
             db.session.add(expense)
             db.session.commit()
+
+            # Return the created expense
             return expense_schema.dump(expense), 201
+
         except ValidationError as err:
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create expense", "details": str(e)}, 500
+
 
     def delete(self, expense_id):
         expense = Expense.query.get_or_404(expense_id)
