@@ -1,23 +1,11 @@
-# resources.py
-
 from flask_restful import Resource
-from flask import request, jsonify
+from flask import request
 from marshmallow import ValidationError
 from models import User, Project, Expense
 from schemas import UserSchema, ProjectSchema, ExpenseSchema
-from extensions import db  # Import db from extensions
+from extensions import db
 
-class UserResource(Resource):
-    def get(self, user_id=None):
-        print("UserResource GET called")
-        if user_id:
-            user = User.query.get_or_404(user_id)
-            print(f"User found: {user}")
-            return {"user": user.to_dict()}, 200
-        users = User.query.all()
-        print(f"All users: {users}")
-        return {"users": [u.to_dict() for u in users]}, 200
-
+# User Resource
 class UserResource(Resource):
     def get(self, user_id=None):
         if user_id:
@@ -28,29 +16,22 @@ class UserResource(Resource):
 
     def post(self):
         try:
-            # Parse the incoming JSON data
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
 
-            # Validate and deserialize the data
             user_schema = UserSchema()
             user_data = user_schema.load(data)
 
-            # Remove 'password' from user_data and handle it separately
             password = user_data.pop('password', None)
             if not password:
                 return {"error": "Password is required"}, 400
 
-            # Create the User instance
             user = User(**user_data)
             user.set_password(password)
 
-            # Save to the database
             db.session.add(user)
             db.session.commit()
-
-            # Return the created user
             return user_schema.dump(user), 201
 
         except ValidationError as err:
@@ -58,7 +39,6 @@ class UserResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create user", "details": str(e)}, 500
-
 
     def delete(self, user_id):
         user = User.query.get_or_404(user_id)
@@ -87,6 +67,8 @@ class UserResource(Resource):
             db.session.rollback()
             return {"error": "Failed to update user", "details": str(e)}, 500
 
+
+# Login Resource
 class LoginResource(Resource):
     def post(self):
         data = request.get_json()
@@ -105,6 +87,8 @@ class LoginResource(Resource):
             "user": user.to_dict()
         }, 200
 
+
+# Project Resource
 class ProjectResource(Resource):
     def get(self, project_id=None):
         project_schema = ProjectSchema()
@@ -114,31 +98,21 @@ class ProjectResource(Resource):
         projects = Project.query.all()
         return project_schema.dump(projects, many=True), 200
 
-class ProjectResource(Resource):
     def post(self):
         project_schema = ProjectSchema()
         try:
-            # Parse JSON request
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
 
-            # Deserialize and validate the payload
             project_data = project_schema.load(data)
-
-            # Check if the user_id exists
             user = User.query.get(project_data["user_id"])
             if not user:
                 return {"error": "User not found"}, 404
 
-            # Create the project instance
             project = Project(**project_data)
-
-            # Save to the database
             db.session.add(project)
             db.session.commit()
-
-            # Return the created project
             return project_schema.dump(project), 201
 
         except ValidationError as err:
@@ -146,7 +120,6 @@ class ProjectResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create project", "details": str(e)}, 500
-
 
     def delete(self, project_id):
         project = Project.query.get_or_404(project_id)
@@ -172,6 +145,8 @@ class ProjectResource(Resource):
             db.session.rollback()
             return {"error": "Failed to update project", "details": str(e)}, 500
 
+
+# Expense Resource
 class ExpenseResource(Resource):
     def get(self, expense_id=None):
         expense_schema = ExpenseSchema()
@@ -181,26 +156,17 @@ class ExpenseResource(Resource):
         expenses = Expense.query.all()
         return expense_schema.dump(expenses, many=True), 200
 
-class ExpenseResource(Resource):
     def post(self):
         expense_schema = ExpenseSchema()
         try:
-            # Parse and validate the incoming JSON
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
 
-            # Load and validate data using the schema
             expense_data = expense_schema.load(data)
-
-            # Create a new Expense instance
             expense = Expense(**expense_data)
-
-            # Save to the database
             db.session.add(expense)
             db.session.commit()
-
-            # Return the created expense
             return expense_schema.dump(expense), 201
 
         except ValidationError as err:
@@ -208,7 +174,6 @@ class ExpenseResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to create expense", "details": str(e)}, 500
-
 
     def delete(self, expense_id):
         expense = Expense.query.get_or_404(expense_id)
@@ -233,4 +198,5 @@ class ExpenseResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update expense", "details": str(e)}, 500
+
 
