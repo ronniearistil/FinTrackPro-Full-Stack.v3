@@ -1,10 +1,8 @@
-# seed.py
-
 from extensions import db
 from app import create_app
 from models import User, Project, Expense
 from faker import Faker
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 fake = Faker()
 
@@ -27,7 +25,7 @@ def seed_users():
         for _ in range(5):
             user = User(
                 name=fake.name(),
-                email=fake.email(),
+                email=fake.unique.email(),  # Ensure unique emails
                 role="user",
             )
             user.set_password("password123")
@@ -64,13 +62,32 @@ def seed_expenses():
             db.session.add(expense)
         db.session.commit()
 
+def seed_collaborators():
+    with app.app_context():
+        projects = Project.query.all()
+        users = User.query.all()
+
+        for project in projects:
+            # Randomly assign 2 collaborators per project
+            collaborators = fake.random_elements(users, length=2, unique=True)
+            for collaborator in collaborators:
+                if collaborator not in project.collaborators:
+                    project.collaborators.append(collaborator)  # Avoid duplicates
+            try:
+                db.session.commit()
+            except Exception as e:
+                print(f"Error adding collaborators to project {project.id}: {e}")
+                db.session.rollback()  # Roll back the transaction for this project
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         seed_users()
         seed_projects()
         seed_expenses()
+        seed_collaborators()
         print("Database seeded successfully!")
+
 
 
 

@@ -1,6 +1,11 @@
-# models.py
-
 from extensions import db, bcrypt
+
+# Association table for many-to-many relationship
+user_projects = db.Table(
+    'user_projects',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('project_id', db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'), primary_key=True)
+)
 
 class User(db.Model):
     __tablename__ = 'users'  # Explicitly set table name to avoid conflicts
@@ -12,7 +17,13 @@ class User(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
-    projects = db.relationship('Project', back_populates='owner', lazy='dynamic')
+
+    # Many-to-Many Relationship with projects
+    projects = db.relationship(
+        'Project',
+        secondary=user_projects,
+        back_populates='collaborators'
+    )
 
     def __repr__(self):
         return f"<User {self.name}>"
@@ -35,6 +46,7 @@ class User(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)
 
+
 class Project(db.Model):
     __tablename__ = 'projects'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
@@ -44,8 +56,16 @@ class Project(db.Model):
     status = db.Column(db.String(50), nullable=False)
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    owner = db.relationship('User', back_populates='projects')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+
+    # Many-to-Many Relationship with users
+    collaborators = db.relationship(
+        'User',
+        secondary=user_projects,
+        back_populates='projects'
+    )
+
+    # One-to-Many Relationship with expenses
     expenses = db.relationship('Expense', back_populates='project', lazy='dynamic')
 
     def __repr__(self):
@@ -61,15 +81,17 @@ class Project(db.Model):
             "start_date": self.start_date.strftime("%Y-%m-%d") if self.start_date else None,
             "end_date": self.end_date.strftime("%Y-%m-%d") if self.end_date else None,
             "user_id": self.user_id,
-            "expenses": [expense.id for expense in self.expenses]
+            "expenses": [expense.id for expense in self.expenses],
+            "collaborators": [user.id for user in self.collaborators]
         }
+
 
 class Expense(db.Model):
     __tablename__ = 'expenses'  # Explicitly set table name
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id', ondelete='CASCADE'), nullable=False)
     project = db.relationship('Project', back_populates='expenses')
 
     def __repr__(self):
