@@ -82,4 +82,3 @@ const ProjectsContainer = ({ searchTerm = '', statusFilter = '', sortOption = ''
 };
 
 export default ProjectsContainer;
-

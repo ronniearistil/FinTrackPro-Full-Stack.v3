@@ -8,6 +8,9 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
+// Log rendering details for debugging
+console.log('Rendering the root with BrowserRouter and ProjectProvider');
+
 root.render(
   <React.StrictMode>
     <BrowserRouter>
