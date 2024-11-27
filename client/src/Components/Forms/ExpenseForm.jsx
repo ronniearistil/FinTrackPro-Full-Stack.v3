@@ -9,6 +9,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    FormHelperText,
 } from '@mui/material';
 import { ProjectContext } from '../../ProjectContext';
 import InputField from './InputField';
@@ -21,7 +22,6 @@ const ExpenseForm = () => {
             name: '',
             amount: '',
             project_id: '',
-            category: '',
         },
         validationSchema: Yup.object({
             name: Yup.string()
@@ -34,7 +34,8 @@ const ExpenseForm = () => {
         }),
         onSubmit: async (values, { resetForm }) => {
             try {
-                await addExpense(values);
+                const formattedValues = { ...values, project_id: Number(values.project_id) };
+                await addExpense(formattedValues);
                 toast.success('Expense added successfully!');
                 resetForm();
             } catch (error) {
@@ -47,8 +48,7 @@ const ExpenseForm = () => {
         <Box component="form" onSubmit={formik.handleSubmit} sx={{ maxWidth: 600, mx: 'auto' }}>
             <InputField formik={formik} name="name" label="Expense Name" />
             <InputField formik={formik} name="amount" label="Amount" type="number" />
-            <InputField formik={formik} name="category" label="Category" />
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" error={formik.touched.project_id && Boolean(formik.errors.project_id)}>
                 <InputLabel id="project-select-label">Select Project</InputLabel>
                 <Select
                     labelId="project-select-label"
@@ -56,7 +56,6 @@ const ExpenseForm = () => {
                     value={formik.values.project_id}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={formik.touched.project_id && Boolean(formik.errors.project_id)}
                 >
                     <MenuItem value="">
                         <em>Select Project</em>
@@ -67,9 +66,7 @@ const ExpenseForm = () => {
                         </MenuItem>
                     ))}
                 </Select>
-                {formik.touched.project_id && formik.errors.project_id && (
-                    <div style={{ color: 'red' }}>{formik.errors.project_id}</div>
-                )}
+                <FormHelperText>{formik.touched.project_id && formik.errors.project_id}</FormHelperText>
             </FormControl>
             <Button type="submit" variant="contained" sx={{ mt: 2 }}>
                 Add Expense

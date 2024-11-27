@@ -8,7 +8,7 @@ user_projects = db.Table(
 )
 
 class User(db.Model):
-    __tablename__ = 'users'  # Explicitly set table name to avoid conflicts
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
@@ -18,15 +18,15 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
-    # Many-to-Many Relationship with projects
     projects = db.relationship(
         'Project',
         secondary=user_projects,
-        back_populates='collaborators'
+        back_populates='collaborators',
+        cascade='all, delete'
     )
 
     def __repr__(self):
-        return f"<User {self.name}>"
+        return f"<User(id={self.id}, name={self.name})>"
 
     def to_dict(self):
         return {
@@ -48,7 +48,7 @@ class User(db.Model):
 
 
 class Project(db.Model):
-    __tablename__ = 'projects'  # Explicitly set table name
+    __tablename__ = 'projects'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     budgeted_cost = db.Column(db.Float, nullable=False)
@@ -62,14 +62,15 @@ class Project(db.Model):
     collaborators = db.relationship(
         'User',
         secondary=user_projects,
-        back_populates='projects'
+        back_populates='projects',
+        cascade='all'  # Removed `delete-orphan`
     )
 
     # One-to-Many Relationship with expenses
-    expenses = db.relationship('Expense', back_populates='project', lazy='dynamic')
+    expenses = db.relationship('Expense', back_populates='project', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return f"<Project {self.name}>"
+        return f"<Project(id={self.id}, name={self.name}, user_id={self.user_id})>"
 
     def to_dict(self):
         return {
@@ -85,9 +86,8 @@ class Project(db.Model):
             "collaborators": [user.id for user in self.collaborators]
         }
 
-
 class Expense(db.Model):
-    __tablename__ = 'expenses'  # Explicitly set table name
+    __tablename__ = 'expenses'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
@@ -95,7 +95,7 @@ class Expense(db.Model):
     project = db.relationship('Project', back_populates='expenses')
 
     def __repr__(self):
-        return f"<Expense {self.name} - {self.amount}>"
+        return f"<Expense(id={self.id}, name={self.name}, amount={self.amount})>"
 
     def to_dict(self):
         return {

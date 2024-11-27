@@ -1,8 +1,16 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 from flask_restful import Api
 from resources import UserResource, LoginResource, ProjectResource, ExpenseResource
 from collaboration_resources import CollaboratorsResource 
-# from user_authorization.auth_resources import SignupResource, LogoutResource, CurrentUserResource
 
+# from server.Auth_Resources.current_user import CurrentUserResource
+# from server.User.Auth_Resources.signup import SignupResource
+# from server.User.Auth_Resources.signin import LoginResource
+# from server.User.Auth_Resources.current_user import CurrentUserResource
+# from User.Auth_Resources.check_login_status import CheckLoginStatusResource
 
 def register_routes(app):
     api = Api(app)  # Initialize Api directly here
@@ -10,6 +18,7 @@ def register_routes(app):
     api.add_resource(LoginResource, '/login')
     api.add_resource(ProjectResource, '/projects', '/projects/<int:project_id>')
     api.add_resource(ExpenseResource, '/expenses', '/expenses/<int:expense_id>')
+    # api.add_resource(CurrentUserResource, '/current-user')
 
 # Collaboration routes
     api.add_resource(
@@ -18,10 +27,8 @@ def register_routes(app):
     '/projects/<int:project_id>/collaborators/<int:user_id>'  # For DELETE
 )
 
-# # Authorization routes
-#     api.add_resource(SignupResource, '/signup')
-#     api.add_resource(LoginResource, '/login')
-#     api.add_resource(LogoutResource, '/logout')
-#     api.add_resource(CurrentUserResource, '/current-user')
-
-
+# # Authentication routes
+#     api.add_resource(SignupResource, '/signup')  # For user signup
+#     api.add_resource(LoginResource, '/login')  # For user login
+#     api.add_resource(CurrentUserResource, '/current-user')  # For fetching current user
+#     api.add_resource(CheckLoginStatusResource, "/auth/status")

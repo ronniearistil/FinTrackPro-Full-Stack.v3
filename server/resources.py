@@ -87,7 +87,6 @@ class LoginResource(Resource):
             "user": user.to_dict()
         }, 200
 
-
 # Project Resource
 class ProjectResource(Resource):
     def get(self, project_id=None):
@@ -108,17 +107,25 @@ class ProjectResource(Resource):
             project_data = project_schema.load(data)
             user = User.query.get(project_data["user_id"])
             if not user:
-                return {"error": "User not found"}, 404
+                return {"error": "User with ID {project_data['user_id']} does not exist."}, 404
+
+            # Debugging Log
+            print(f"Creating project with data: {project_data}")
 
             project = Project(**project_data)
             db.session.add(project)
             db.session.commit()
+
+            # Confirm addition
+            print(f"Project added: {project.to_dict()}")
             return project_schema.dump(project), 201
 
         except ValidationError as err:
+            print(f"Validation Error: {err.messages}")
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
+            print(f"Error while creating project: {str(e)}")
             return {"error": "Failed to create project", "details": str(e)}, 500
 
     def delete(self, project_id):
@@ -198,5 +205,6 @@ class ExpenseResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update expense", "details": str(e)}, 500
+    
 
 

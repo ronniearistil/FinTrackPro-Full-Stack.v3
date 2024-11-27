@@ -1,4 +1,3 @@
-# server/collaboration_resources.py
 from flask_restful import Resource
 from flask import request
 from models import User, Project
@@ -6,12 +5,13 @@ from extensions import db
 from schemas import UserSchema
 
 user_schema = UserSchema()
+
 class CollaboratorsResource(Resource):
     # GET all collaborators for a project
     def get(self, project_id):
         project = Project.query.get_or_404(project_id)
         collaborators = project.collaborators
-        return user_schema.dump(collaborators, many=True), 200
+        return {"collaborators": user_schema.dump(collaborators, many=True)}, 200
 
     # POST to add a collaborator
     def post(self, project_id):
@@ -41,3 +41,4 @@ class CollaboratorsResource(Resource):
         project.collaborators.remove(user)
         db.session.commit()
         return {"message": f"User {user_id} removed from project {project_id}"}, 200
+

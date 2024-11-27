@@ -1,10 +1,14 @@
 # app.py
+import sys
+import os
+# Add the directory containing app.py to the Python module search path
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 from sqlalchemy.sql import text
-import os
+
 
 # Load environment variables
 load_dotenv()

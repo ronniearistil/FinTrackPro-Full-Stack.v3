@@ -28,9 +28,8 @@ class ProjectSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Project
         include_relationships = True
-        load_instance = False  # Always return a dictionary
+        load_instance = False
 
-    # Fields
     name = fields.String(required=True, validate=validate.Length(min=1))
     budgeted_cost = fields.Float(required=True, validate=validate.Range(min=0))
     actual_cost = fields.Float(validate=validate.Range(min=0))
@@ -39,11 +38,11 @@ class ProjectSchema(ma.SQLAlchemyAutoSchema):
     end_date = fields.Date(allow_none=True)
     user_id = fields.Integer(required=True, validate=validate.Range(min=1))
 
-    @validates("status")
-    def validate_status(self, value):
-        valid_statuses = ["In Progress", "Completed", "At Risk"]
-        if value not in valid_statuses:
-            raise ValidationError(f"Invalid status. Must be one of {valid_statuses}.")
+    @validates("user_id")
+    def validate_user_id(self, value):
+        if not User.query.get(value):
+            raise ValidationError(f"User with ID {value} does not exist.")
+
 
 class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -54,3 +53,5 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     name = fields.String(required=True, validate=validate.Length(min=1))
     amount = fields.Float(required=True, validate=validate.Range(min=0))
     project_id = fields.Integer(required=True, validate=validate.Range(min=1))
+    
+
