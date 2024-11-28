@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { toast } from 'react-toastify';
+import React, { useContext } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
 import {
     Button,
     Box,
@@ -10,46 +10,54 @@ import {
     Select,
     MenuItem,
     TextField,
-} from '@mui/material';
-import { ProjectContext } from '../../ProjectContext';
+} from "@mui/material";
+import { ProjectContext } from "../../ProjectContext";
 
-const ProjectForm = () => {
-    const { addProject, users } = useContext(ProjectContext);
+const ProjectForm = ({ projectToEdit, onClose }) => {
+    const { addProject, editProject, users } = useContext(ProjectContext);
+    const isEditing = Boolean(projectToEdit);
 
     const formik = useFormik({
         initialValues: {
-            name: '',
-            budgeted_cost: '',
-            start_date: '',
-            end_date: '',
-            user_id: '',
-            status: 'In Progress',
+            name: projectToEdit?.name || "",
+            budgeted_cost: projectToEdit?.budgeted_cost || "",
+            start_date: projectToEdit?.start_date || "",
+            end_date: projectToEdit?.end_date || "",
+            user_id: projectToEdit?.user_id || "",
+            status: projectToEdit?.status || "In Progress",
         },
         validationSchema: Yup.object({
-            name: Yup.string()
-                .min(3, 'Project name must be at least 3 characters')
-                .required('Project name is required'),
+            name: Yup.string().required("Project name is required"),
             budgeted_cost: Yup.number()
-                .positive('Budgeted cost must be greater than zero')
-                .required('Budgeted cost is required'),
-            start_date: Yup.date().required('Start date is required'),
-            end_date: Yup.date(),
-            user_id: Yup.string().required('Project owner is required'),
-            status: Yup.string().required('Project status is required'),
+                .positive("Budgeted cost must be a positive number")
+                .required("Budgeted cost is required"),
+            start_date: Yup.date().required("Start date is required"),
+            end_date: Yup.date().nullable(),
+            user_id: Yup.number()
+                .integer("Project owner must be selected")
+                .required("Project owner is required"),
+            status: Yup.string().required("Project status is required"),
         }),
-        onSubmit: async (values, { resetForm }) => {
+        onSubmit: async (values) => {
             try {
-                await addProject(values);
-                toast.success('Project added successfully!');
-                resetForm();
+                if (isEditing) {
+                    await editProject({ ...values, id: projectToEdit.id });
+                    toast.success("Project updated successfully!");
+                } else {
+                    await addProject(values);
+                    toast.success("Project added successfully!");
+                }
+                if (onClose) onClose();
             } catch (error) {
-                toast.error('Failed to add project. Please try again.');
+                toast.error(
+                    `Failed to ${isEditing ? "update" : "add"} project. Please try again.`
+                );
             }
         },
     });
 
     return (
-        <Box component="form" onSubmit={formik.handleSubmit} sx={{ maxWidth: 600, mx: 'auto' }}>
+        <Box component="form" onSubmit={formik.handleSubmit} sx={{ maxWidth: 600, mx: "auto" }}>
             <TextField
                 label="Project Name"
                 name="name"
@@ -84,9 +92,7 @@ const ProjectForm = () => {
                 helperText={formik.touched.start_date && formik.errors.start_date}
                 fullWidth
                 margin="normal"
-                InputLabelProps={{
-                    shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
             />
             <TextField
                 label="End Date"
@@ -99,9 +105,7 @@ const ProjectForm = () => {
                 helperText={formik.touched.end_date && formik.errors.end_date}
                 fullWidth
                 margin="normal"
-                InputLabelProps={{
-                    shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
             />
             <FormControl fullWidth margin="normal">
                 <InputLabel id="user-select-label">Project Owner</InputLabel>
@@ -116,21 +120,12 @@ const ProjectForm = () => {
                     <MenuItem value="">
                         <em>Select Owner</em>
                     </MenuItem>
-                    {Array.isArray(users) && users.length > 0 ? (
-                        users.map((user) => (
-                            <MenuItem key={user.id} value={user.id}>
-                                {user.name}
-                            </MenuItem>
-                        ))
-                    ) : (
-                        <MenuItem disabled>No users available</MenuItem>
-                    )}
+                    {users.map((user) => (
+                        <MenuItem key={user.id} value={user.id}>
+                            {user.name}
+                        </MenuItem>
+                    ))}
                 </Select>
-                {formik.touched.user_id && formik.errors.user_id && (
-                    <div style={{ color: 'red', marginTop: '8px' }}>
-                        {formik.errors.user_id}
-                    </div>
-                )}
             </FormControl>
             <FormControl fullWidth margin="normal">
                 <InputLabel id="status-select-label">Status</InputLabel>
@@ -146,17 +141,13 @@ const ProjectForm = () => {
                     <MenuItem value="Completed">Completed</MenuItem>
                     <MenuItem value="At Risk">At Risk</MenuItem>
                 </Select>
-                {formik.touched.status && formik.errors.status && (
-                    <div style={{ color: 'red', marginTop: '8px' }}>
-                        {formik.errors.status}
-                    </div>
-                )}
             </FormControl>
-            <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-                Add Project
+            <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+                {isEditing ? "Update Project" : "Add Project"}
             </Button>
         </Box>
     );
 };
 
 export default ProjectForm;
+

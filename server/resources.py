@@ -205,6 +205,4 @@ class ExpenseResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update expense", "details": str(e)}, 500
-    
-
 
