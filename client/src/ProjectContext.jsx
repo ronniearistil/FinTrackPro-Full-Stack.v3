@@ -44,6 +44,7 @@ export const ProjectProvider = ({ children }) => {
 
     // Edit a project
     const editProject = async (updatedProject) => {
+        console.log("Payload for editing project:", updatedProject); // Log the payload
         try {
             const response = await axios.patch(
                 `${PROJECTS_URL}/${updatedProject.id}`,
@@ -58,6 +59,7 @@ export const ProjectProvider = ({ children }) => {
             console.error("Error editing project:", error);
         }
     };
+    
 
     // Delete a project
     const deleteProject = async (projectId) => {
@@ -143,6 +145,17 @@ export const ProjectProvider = ({ children }) => {
         }
     };
 
+    // Force a refresh of project data after expense changes
+    const refreshProjects = async () => {
+        try {
+            const response = await axios.get(PROJECTS_URL);
+            setProjects(response.data || []);
+        } catch (error) {
+            console.error("Error refreshing projects:", error);
+        }
+    };
+
+    
     return (
         <ProjectContext.Provider
             value={{

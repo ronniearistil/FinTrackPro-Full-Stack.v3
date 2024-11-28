@@ -65,18 +65,20 @@ const App = () => {
     const handleStatusFilter = (status) => setStatusFilter(status);
     const handleSort = (option) => setSortOption(option);
 
-    // Authentication Handlers
     const handleSignUpSuccess = (user) => {
+        console.log('Signed-up user:', user); // Debugging
         setIsAuthenticated(true);
         setCurrentUser(user);
-        showToast('Sign-up successful! Welcome!');
+        showToast(`Welcome back, ${user.name || 'User'}!`);
         navigate('/projects');
     };
-
-    const handleLoginSuccess = (user) => {
+    
+    const handleLoginSuccess = (response) => {
+        const user = response.data?.user || response.user || {}; // Adjust based on API structure
+        console.log('Logged-in user:', user); // Debugging
         setIsAuthenticated(true);
         setCurrentUser(user);
-        showToast(`Welcome back, ${user.name}!`);
+        showToast(`Welcome back, ${user.name || 'User'}!`);
         navigate('/projects');
     };
 
@@ -106,6 +108,7 @@ const App = () => {
                         onLogin={() => navigate('/login')}
                         onSignUp={() => navigate('/signup')}
                         isAuthenticated={isAuthenticated}
+                        greeting={isAuthenticated ? `Welcome back, ${currentUser?.name || 'User'}!` : 'Welcome to FinTrackPro, Please Login!'} 
                     />
                     <Routes>
                         <Route path="/" element={<Navigate to="/projects" />} />

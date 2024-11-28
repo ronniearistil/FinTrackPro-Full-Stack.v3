@@ -152,7 +152,6 @@ class ProjectResource(Resource):
             db.session.rollback()
             return {"error": "Failed to update project", "details": str(e)}, 500
 
-
 # Expense Resource
 class ExpenseResource(Resource):
     def get(self, expense_id=None):
@@ -206,3 +205,63 @@ class ExpenseResource(Resource):
             db.session.rollback()
             return {"error": "Failed to update expense", "details": str(e)}, 500
 
+def post(self):
+    expense_schema = ExpenseSchema()
+    try:
+        data = request.get_json()
+        if not data:
+            return {"error": "No data provided or invalid JSON format"}, 400
+
+        expense_data = expense_schema.load(data)
+        expense = Expense(**expense_data)
+        db.session.add(expense)
+        db.session.commit()
+
+        # Update the associated project's actual_cost
+        project = Project.query.get(expense.project_id)
+        if project:
+            project.update_actual_cost()
+
+        return expense_schema.dump(expense), 201
+    except ValidationError as err:
+        return {"error": "Validation error", "details": err.messages}, 400
+    except Exception as e:
+        db.session.rollback()
+        return {"error": "Failed to create expense", "details": str(e)}, 500
+
+def patch(self, expense_id):
+    expense_schema = ExpenseSchema()
+    expense = Expense.query.get_or_404(expense_id)
+    try:
+        data = request.get_json()
+        if not data:
+            return {"error": "No data provided or invalid JSON format"}, 400
+        expense_data = expense_schema.load(data, partial=True)
+        for key, value in expense_data.items():
+            setattr(expense, key, value)
+        db.session.commit()
+
+        # Update the associated project's actual_cost
+        project = Project.query.get(expense.project_id)
+        if project:
+            project.update_actual_cost()
+
+        return expense_schema.dump(expense), 200
+    except ValidationError as err:
+        return {"error": "Validation error", "details": err.messages}, 400
+    except Exception as e:
+        db.session.rollback()
+        return {"error": "Failed to update expense", "details": str(e)}, 500
+
+def delete(self, expense_id):
+    expense = Expense.query.get_or_404(expense_id)
+    project_id = expense.project_id  # Get project ID before deletion
+    db.session.delete(expense)
+    db.session.commit()
+
+    # Update the associated project's actual_cost
+    project = Project.query.get(project_id)
+    if project:
+        project.update_actual_cost()
+
+    return {"message": "Expense deleted successfully"}, 204

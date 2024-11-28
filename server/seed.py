@@ -1,3 +1,4 @@
+from random import randint
 from extensions import db
 from app import create_app
 from models import User, Project, Expense
@@ -32,40 +33,82 @@ def seed_users():
             db.session.add(user)
         db.session.commit()
 
+# def seed_projects():
+#     with app.app_context():
+#         user_ids = [user.id for user in User.query.all()]
+#         for _ in range(5):
+#             project_name = fake.catch_phrase()  # Use more descriptive project-related phrases
+#             start_date = fake.date_this_year(before_today=True, after_today=False)
+#             end_date = start_date + timedelta(days=fake.random_int(min=30, max=180))  # Longer project timelines
+#             project = Project(
+#                 name=project_name,
+#                 budgeted_cost=fake.random_number(digits=5, fix_len=True),
+#                 actual_cost=fake.random_number(digits=5, fix_len=True),
+#                 status=fake.random_element(["In Progress", "Completed", "At Risk"]),
+#                 start_date=start_date,
+#                 end_date=end_date,
+#                 user_id=fake.random_element(user_ids),
+#             )
+#             db.session.add(project)
+#         db.session.commit()
+# 
+# 
+# def seed_expenses():
+#     with app.app_context():
+#         projects = Project.query.all()
+#         expense_categories = ["Materials", "Labor", "Consultation", "Transportation", "Equipment", "Marketing"]
+# 
+#         for project in projects:
+#             num_expenses = fake.random_int(min=3, max=10)  # Generate 3-10 expenses per project
+#             for _ in range(num_expenses):
+#                 expense = Expense(
+#                     name=fake.random_element(expense_categories),
+#                     amount=fake.random_number(digits=4, fix_len=True),
+#                     project_id=project.id,
+#                 )
+#                 db.session.add(expense)
+#         db.session.commit()
 def seed_projects():
     with app.app_context():
         user_ids = [user.id for user in User.query.all()]
+        project_ids = []
         for _ in range(5):
-            project_name = fake.catch_phrase()  # Use more descriptive project-related phrases
             start_date = fake.date_this_year(before_today=True, after_today=False)
-            end_date = start_date + timedelta(days=fake.random_int(min=30, max=180))  # Longer project timelines
+            end_date = start_date + timedelta(days=fake.random_int(min=1, max=30))
             project = Project(
-                name=project_name,
-                budgeted_cost=fake.random_number(digits=5, fix_len=True),
-                actual_cost=fake.random_number(digits=5, fix_len=True),
+                name=fake.company(),
+                budgeted_cost=fake.random_number(digits=5),
+                actual_cost=0,  # Initialize as 0; will calculate below
                 status=fake.random_element(["In Progress", "Completed", "At Risk"]),
                 start_date=start_date,
                 end_date=end_date,
                 user_id=fake.random_element(user_ids),
             )
             db.session.add(project)
+            db.session.flush()  # Get project ID immediately after insertion
+            project_ids.append(project.id)
         db.session.commit()
 
+        return project_ids
 
 def seed_expenses():
     with app.app_context():
-        projects = Project.query.all()
-        expense_categories = ["Materials", "Labor", "Consultation", "Transportation", "Equipment", "Marketing"]
-
-        for project in projects:
-            num_expenses = fake.random_int(min=3, max=10)  # Generate 3-10 expenses per project
-            for _ in range(num_expenses):
+        project_ids = seed_projects()
+        for project_id in project_ids:
+            total_expenses = 0
+            for _ in range(randint(3, 10)):  # Create between 3 and 10 expenses per project
                 expense = Expense(
-                    name=fake.random_element(expense_categories),
-                    amount=fake.random_number(digits=4, fix_len=True),
-                    project_id=project.id,
+                    name=fake.word(),
+                    amount=fake.random_number(digits=4),
+                    project_id=project_id,
                 )
+                total_expenses += expense.amount  # Accumulate total expenses for this project
                 db.session.add(expense)
+
+            # Update the project's actual_cost
+            project = Project.query.get(project_id)
+            if project:
+                project.actual_cost = total_expenses
         db.session.commit()
 
 def seed_collaborators():

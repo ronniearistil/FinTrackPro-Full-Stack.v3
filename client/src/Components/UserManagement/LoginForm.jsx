@@ -27,7 +27,7 @@ const LoginForm = ({ onLoginSuccess }) => {
                 email: formData.email,
                 password: formData.password,
             });
-            toast.success('Login successful!');
+            // toast.success('Login successful!');
             onLoginSuccess(response.data);
         } catch (err) {
             console.error('Error logging in:', err);

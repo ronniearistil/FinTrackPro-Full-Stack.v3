@@ -3,12 +3,21 @@ import { AppBar, Toolbar, Box, IconButton, Menu, MenuItem, Typography, InputBase
 import { AccountCircle } from '@mui/icons-material';
 import NavLink from './NavLink';
 
-const NavBar = ({ onSearch, onStatusFilter, onSort, onSignOut, onLogin, onSignUp }) => {
+const NavBar = ({ 
+    onSearch, 
+    onStatusFilter, 
+    onSort, 
+    onSignOut, 
+    onLogin, 
+    onSignUp, 
+    isAuthenticated, 
+    currentUser,
+
+}) => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [status, setStatus] = useState('');
     const [sortOption, setSortOption] = useState('');
-
     const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
 
@@ -105,6 +114,9 @@ const NavBar = ({ onSearch, onStatusFilter, onSort, onSignOut, onLogin, onSignUp
 
                 {/* User Account Menu */}
                 <Box>
+                    <Typography sx={{ mr: 2, color: 'white', fontWeight: 'bold' }}>
+                    {isAuthenticated ? `Welcome, ${currentUser?.name || 'User'}!` : 'Welcome to FinTrackPro, Please Login!'}
+                    </Typography>
                     <IconButton onClick={handleMenuOpen}>
                         <AccountCircle fontSize="large" sx={{ color: 'white' }} />
                     </IconButton>
@@ -113,9 +125,9 @@ const NavBar = ({ onSearch, onStatusFilter, onSort, onSignOut, onLogin, onSignUp
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
                     >
-                        <MenuItem onClick={onSignUp}>Sign Up</MenuItem>
-                        <MenuItem onClick={onLogin}>Sign In</MenuItem>
-                        <MenuItem onClick={onSignOut}>Logout</MenuItem>
+                        {!isAuthenticated && <MenuItem onClick={onSignUp}>Sign Up</MenuItem>}
+                        {!isAuthenticated && <MenuItem onClick={onLogin}>Sign In</MenuItem>}
+                        {isAuthenticated && <MenuItem onClick={onSignOut}>Logout</MenuItem>}
                     </Menu>
                 </Box>
             </Toolbar>

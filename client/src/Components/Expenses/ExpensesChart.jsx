@@ -1,21 +1,25 @@
-// src/Components/ExpensesChart.jsx
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+// Components/Charts/ProjectChart.jsx
+import React from "react";
+import { Bar } from "react-chartjs-2";
 
-const ExpensesChart = ({ expenses }) => {
-    const data = expenses.map((expense) => ({
-        name: expense.name,
-        amount: expense.amount,
-    }));
+const ProjectChart = () => {
+    const data = {
+        labels: ["Project A", "Project B", "Project C"],
+        datasets: [
+            {
+                label: "Budgeted Cost",
+                data: [20000, 15000, 30000],
+                backgroundColor: "rgba(75, 192, 192, 0.6)",
+            },
+            {
+                label: "Actual Cost",
+                data: [18000, 16000, 28000],
+                backgroundColor: "rgba(255, 99, 132, 0.6)",
+            },
+        ],
+    };
 
-    return (
-        <BarChart width={600} height={300} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="amount" fill="#8884d8" />
-        </BarChart>
-    );
+    return <Bar data={data} />;
 };
 
-export default ExpensesChart;
+export default ProjectChart;
