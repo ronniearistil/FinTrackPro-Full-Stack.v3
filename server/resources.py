@@ -235,39 +235,39 @@ class ExpenseResource(Resource):
 
         return {"message": "Expense deleted successfully"}, 204
 
-def patch(self, expense_id):
-    expense_schema = ExpenseSchema()
-    expense = Expense.query.get_or_404(expense_id)
-    try:
-        # Get incoming JSON data
-        data = request.get_json()
-        if not data:
-            return {"error": "No data provided or invalid JSON format"}, 400
+    def patch(self, expense_id):
+        expense_schema = ExpenseSchema()
+        expense = Expense.query.get_or_404(expense_id)
+        try:
+            # Get incoming JSON data
+            data = request.get_json()
+            if not data:
+                return {"error": "No data provided or invalid JSON format"}, 400
 
-        # Validate and load data with partial=True for partial updates
-        expense_data = expense_schema.load(data, partial=True)
+            # Validate and load data with partial=True for partial updates
+            expense_data = expense_schema.load(data, partial=True)
 
-        # Update only valid fields
-        for key, value in expense_data.items():
-            if hasattr(expense, key):
-                setattr(expense, key, value)
+            # Update only valid fields
+            for key, value in expense_data.items():
+                if hasattr(expense, key):
+                    setattr(expense, key, value)
 
-        # Update the dynamic category
-        expense.category = get_category(expense.name)
+            # Update the dynamic category
+            expense.category = get_category(expense.name)
 
-        # Commit changes to the database
-        db.session.commit()
+            # Commit changes to the database
+            db.session.commit()
 
-        # Serialize the updated expense
-        updated_expense = expense_schema.dump(expense)
-        updated_expense["category"] = get_category(expense.name)
-        return updated_expense, 200
+            # Serialize the updated expense
+            updated_expense = expense_schema.dump(expense)
+            updated_expense["category"] = get_category(expense.name)
+            return updated_expense, 200
 
-    except ValidationError as err:
-        return {"error": "Validation error", "details": err.messages}, 400
-    except Exception as e:
-        db.session.rollback()
-        return {"error": "Failed to update expense", "details": str(e)}, 500
+        except ValidationError as err:
+            return {"error": "Validation error", "details": err.messages}, 400
+        except Exception as e:
+            db.session.rollback()
+            return {"error": "Failed to update expense", "details": str(e)}, 500
 
 class ExpenseArchiveResource(Resource):
     def patch(self, expense_id):
