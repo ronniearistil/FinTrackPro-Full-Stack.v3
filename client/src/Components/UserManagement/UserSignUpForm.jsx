@@ -26,7 +26,7 @@ const SignupForm = ({ onSignUpSuccess }) => {
                 .required('Confirm password is required'),
         }),
         onSubmit: async (values, { setSubmitting }) => {
-            const { confirmPassword, ...payload } = values; // Remove confirmPassword before sending
+            const { confirmPassword, ...payload } = values; // Exclude confirmPassword
             try {
                 const response = await axios.post('http://localhost:5555/users', payload);
                 toast.success('Signup successful!');
@@ -114,5 +114,6 @@ const SignupForm = ({ onSignUpSuccess }) => {
 };
 
 export default SignupForm;
+
 
 

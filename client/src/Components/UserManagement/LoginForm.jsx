@@ -27,11 +27,13 @@ const LoginForm = ({ onLoginSuccess }) => {
                 email: formData.email,
                 password: formData.password,
             });
-            // toast.success('Login successful!');
-            onLoginSuccess(response.data);
+            toast.success('Login successful!');
+            onLoginSuccess(response.data); // Call the parent callback with login details
         } catch (err) {
             console.error('Error logging in:', err);
-            toast.error(err.response?.data?.error || 'Invalid email or password.');
+            const errorMessage =
+                err.response?.data?.error || 'Invalid email or password. Please try again.';
+            toast.error(errorMessage);
         }
     };
 
@@ -77,3 +79,4 @@ const LoginForm = ({ onLoginSuccess }) => {
 };
 
 export default LoginForm;
+
