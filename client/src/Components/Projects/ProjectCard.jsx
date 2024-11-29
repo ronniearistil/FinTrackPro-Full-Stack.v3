@@ -38,16 +38,27 @@ const ProjectCard = ({ project }) => {
   };
   const handleEditClose = () => setEditModalOpen(false);
 
-  // Update field values
+  // Update field values with validation for progress_percentage
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedProject((prev) => ({ ...prev, [name]: value }));
+    setUpdatedProject((prev) => {
+      if (name === 'progress_percentage') {
+        const clampedValue = Math.min(100, Math.max(0, value)); // Ensure value is between 0 and 100
+        return { ...prev, [name]: clampedValue };
+      }
+      return { ...prev, [name]: value };
+    });
   };
 
   // Save changes
-  const handleEditSave = () => {
-    editProject(updatedProject);
-    setEditModalOpen(false);
+  const handleEditSave = async () => {
+    try {
+      await editProject(updatedProject);
+      setEditModalOpen(false);
+    } catch (error) {
+      console.error("Error updating project:", error);
+      alert("Failed to save changes. Please try again.");
+    }
   };
 
   // Toggle archived status
@@ -148,6 +159,7 @@ const ProjectCard = ({ project }) => {
             onChange={handleEditChange}
             fullWidth
             sx={{ marginBottom: 2 }}
+            helperText="Enter a value between 0 and 100"
           />
           <TextField
             label="Category"
@@ -185,4 +197,5 @@ const ProjectCard = ({ project }) => {
 };
 
 export default ProjectCard;
+
 

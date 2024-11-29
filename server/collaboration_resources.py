@@ -7,38 +7,51 @@ from schemas import UserSchema
 user_schema = UserSchema()
 
 class CollaboratorsResource(Resource):
-    # GET all collaborators for a project
     def get(self, project_id):
-        project = Project.query.get_or_404(project_id)
-        collaborators = project.collaborators
-        return {"collaborators": user_schema.dump(collaborators, many=True)}, 200
+        try:
+            project = Project.query.get_or_404(project_id)
+            collaborators = project.collaborators
+            return {"collaborators": user_schema.dump(collaborators, many=True)}, 200
+        except Exception as e:
+            return {"error": f"Failed to retrieve collaborators: {str(e)}"}, 500
 
-    # POST to add a collaborator
     def post(self, project_id):
-        data = request.get_json()
-        user_id = data.get('user_id')
-        if not user_id:
-            return {"error": "user_id is required"}, 400
+        try:
+            data = request.get_json()
+            user_id = data.get('user_id')
+            if not user_id:
+                return {"error": "user_id is required"}, 400
 
-        project = Project.query.get_or_404(project_id)
-        user = User.query.get_or_404(user_id)
+            project = Project.query.get_or_404(project_id)
+            user = User.query.get_or_404(user_id)
 
-        if user in project.collaborators:
-            return {"message": "User is already a collaborator"}, 200
+            if user in project.collaborators:
+                return {"message": "User is already a collaborator"}, 200
 
-        project.collaborators.append(user)
-        db.session.commit()
-        return {"message": f"User {user_id} added as collaborator to project {project_id}"}, 200
+            project.collaborators.append(user)
+            db.session.commit()
+            return {
+                "message": f"User {user_id} added as collaborator to project {project_id}",
+                "collaborators": user_schema.dump(project.collaborators, many=True)
+            }, 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"Failed to add collaborator: {str(e)}"}, 500
 
-    # DELETE a collaborator
     def delete(self, project_id, user_id):
-        project = Project.query.get_or_404(project_id)
-        user = User.query.get_or_404(user_id)
+        try:
+            project = Project.query.get_or_404(project_id)
+            user = User.query.get_or_404(user_id)
 
-        if user not in project.collaborators:
-            return {"error": "User is not a collaborator"}, 404
+            if user not in project.collaborators:
+                return {"error": "User is not a collaborator"}, 404
 
-        project.collaborators.remove(user)
-        db.session.commit()
-        return {"message": f"User {user_id} removed from project {project_id}"}, 200
-
+            project.collaborators.remove(user)
+            db.session.commit()
+            return {
+                "message": f"User {user_id} removed from project {project_id}",
+                "collaborators": user_schema.dump(project.collaborators, many=True)
+            }, 200
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"Failed to remove collaborator: {str(e)}"}, 500

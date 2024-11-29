@@ -5,6 +5,17 @@ from models import User, Project, Expense
 from schemas import UserSchema, ProjectSchema, ExpenseSchema
 from extensions import db
 
+# Helper function for category determination
+def get_category(expense_name):
+    categories = {
+        "Marketing Campaign": "Marketing",
+        "Labor": "Labor",
+        "Materials": "Materials",
+        "Transportation": "Logistics",
+        "Consultation": "Professional Services",
+    }
+    return categories.get(expense_name, "General")
+
 # User Resource
 class UserResource(Resource):
     def get(self, user_id=None):
@@ -107,25 +118,17 @@ class ProjectResource(Resource):
             project_data = project_schema.load(data)
             user = User.query.get(project_data["user_id"])
             if not user:
-                return {"error": "User with ID {project_data['user_id']} does not exist."}, 404
-
-            # Debugging Log
-            print(f"Creating project with data: {project_data}")
+                return {"error": f"User with ID {project_data['user_id']} does not exist."}, 404
 
             project = Project(**project_data)
             db.session.add(project)
             db.session.commit()
-
-            # Confirm addition
-            print(f"Project added: {project.to_dict()}")
             return project_schema.dump(project), 201
 
         except ValidationError as err:
-            print(f"Validation Error: {err.messages}")
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
-            print(f"Error while creating project: {str(e)}")
             return {"error": "Failed to create project", "details": str(e)}, 500
 
     def delete(self, project_id):
@@ -141,16 +144,13 @@ class ProjectResource(Resource):
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
+
             project_data = project_schema.load(data, partial=True)
             for key, value in project_data.items():
                 setattr(project, key, value)
-                
-            # Update actual cost dynamically if needed
-            if "actual_cost" in data:
-                project.update_actual_cost()
-            
             db.session.commit()
             return project_schema.dump(project), 200
+
         except ValidationError as err:
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
@@ -163,9 +163,14 @@ class ExpenseResource(Resource):
         expense_schema = ExpenseSchema()
         if expense_id:
             expense = Expense.query.get_or_404(expense_id)
-            return expense_schema.dump(expense), 200
+            expense_data = expense_schema.dump(expense)
+            expense_data["category"] = get_category(expense.name)
+            return expense_data, 200
         expenses = Expense.query.all()
-        return expense_schema.dump(expenses, many=True), 200
+        expense_data = expense_schema.dump(expenses, many=True)
+        for expense in expense_data:
+            expense["category"] = get_category(expense["name"])
+        return expense_data, 200
 
     def post(self):
         expense_schema = ExpenseSchema()
@@ -178,12 +183,15 @@ class ExpenseResource(Resource):
             expense = Expense(**expense_data)
             db.session.add(expense)
             db.session.commit()
-            # Update project's actual cost after adding an expense
+
+            # Update the associated project's actual_cost
             project = Project.query.get(expense.project_id)
             if project:
                 project.update_actual_cost()
-                
-            return expense_schema.dump(expense), 201
+
+            expense_data = expense_schema.dump(expense)
+            expense_data["category"] = get_category(expense.name)
+            return expense_data, 201
 
         except ValidationError as err:
             return {"error": "Validation error", "details": err.messages}, 400
@@ -193,16 +201,15 @@ class ExpenseResource(Resource):
 
     def delete(self, expense_id):
         expense = Expense.query.get_or_404(expense_id)
-        
-        project_id = expense.project_id  # Save project ID before deletion
-        
+        project_id = expense.project_id
         db.session.delete(expense)
         db.session.commit()
-        # Recalculate actual cost
+
+        # Update the associated project's actual_cost
         project = Project.query.get(project_id)
         if project:
             project.update_actual_cost()
-            
+
         return {"message": "Expense deleted successfully"}, 204
 
     def patch(self, expense_id):
@@ -212,74 +219,81 @@ class ExpenseResource(Resource):
             data = request.get_json()
             if not data:
                 return {"error": "No data provided or invalid JSON format"}, 400
+
             expense_data = expense_schema.load(data, partial=True)
             for key, value in expense_data.items():
                 setattr(expense, key, value)
             db.session.commit()
-            return expense_schema.dump(expense), 200
+
+            expense_data = expense_schema.dump(expense)
+            expense_data["category"] = get_category(expense.name)
+            return expense_data, 200
+
         except ValidationError as err:
             return {"error": "Validation error", "details": err.messages}, 400
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update expense", "details": str(e)}, 500
 
-def post(self):
-    expense_schema = ExpenseSchema()
-    try:
-        data = request.get_json()
-        if not data:
-            return {"error": "No data provided or invalid JSON format"}, 400
 
-        expense_data = expense_schema.load(data)
-        expense = Expense(**expense_data)
-        db.session.add(expense)
-        db.session.commit()
+# Collaborators Resource
+class CollaboratorsResource(Resource):
+    def get(self, project_id):
+        """Retrieve all collaborators for a specific project."""
+        project = Project.query.get_or_404(project_id)
+        return {
+            "collaborators": [user.to_dict() for user in project.collaborators]
+        }, 200
 
-        # Update the associated project's actual_cost
-        project = Project.query.get(expense.project_id)
-        if project:
-            project.update_actual_cost()
+    def post(self, project_id):
+        """Add a collaborator to a project."""
+        try:
+            data = request.get_json()
+            if not data or "user_id" not in data:
+                return {"error": "User ID is required"}, 400
 
-        return expense_schema.dump(expense), 201
-    except ValidationError as err:
-        return {"error": "Validation error", "details": err.messages}, 400
-    except Exception as e:
-        db.session.rollback()
-        return {"error": "Failed to create expense", "details": str(e)}, 500
+            user_id = data["user_id"]
+            project = Project.query.get_or_404(project_id)
+            user = User.query.get_or_404(user_id)
 
-def patch(self, expense_id):
-    expense_schema = ExpenseSchema()
-    expense = Expense.query.get_or_404(expense_id)
-    try:
-        data = request.get_json()
-        if not data:
-            return {"error": "No data provided or invalid JSON format"}, 400
-        expense_data = expense_schema.load(data, partial=True)
-        for key, value in expense_data.items():
-            setattr(expense, key, value)
-        db.session.commit()
+            # Check if user is already a collaborator
+            if user in project.collaborators:
+                return {
+                    "message": f"User {user_id} is already a collaborator on project {project_id}"
+                }, 400
 
-        # Update the associated project's actual_cost
-        project = Project.query.get(expense.project_id)
-        if project:
-            project.update_actual_cost()
+            # Add the user as a collaborator
+            project.collaborators.append(user)
+            db.session.commit()
 
-        return expense_schema.dump(expense), 200
-    except ValidationError as err:
-        return {"error": "Validation error", "details": err.messages}, 400
-    except Exception as e:
-        db.session.rollback()
-        return {"error": "Failed to update expense", "details": str(e)}, 500
+            return {
+                "message": f"User {user_id} added as a collaborator to project {project_id}",
+                "collaborators": [user.to_dict() for user in project.collaborators]
+            }, 201
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"Failed to add collaborator: {str(e)}"}, 500
 
-def delete(self, expense_id):
-    expense = Expense.query.get_or_404(expense_id)
-    project_id = expense.project_id  # Get project ID before deletion
-    db.session.delete(expense)
-    db.session.commit()
+    def delete(self, project_id, user_id):
+        """Remove a collaborator from a project."""
+        try:
+            project = Project.query.get_or_404(project_id)
+            user = User.query.get_or_404(user_id)
 
-    # Update the associated project's actual_cost
-    project = Project.query.get(project_id)
-    if project:
-        project.update_actual_cost()
+            # Check if user is a collaborator
+            if user not in project.collaborators:
+                return {
+                    "error": f"User {user_id} is not a collaborator on project {project_id}"
+                }, 404
 
-    return {"message": "Expense deleted successfully"}, 204
+            # Remove the user from collaborators
+            project.collaborators.remove(user)
+            db.session.commit()
+
+            return {
+                "message": f"User {user_id} removed from project {project_id}",
+                "collaborators": [user.to_dict() for user in project.collaborators]
+            }, 200
+        except Exception as e:
+            db.session.rollback()
+            return {"error": f"Failed to remove collaborator: {str(e)}"}, 500

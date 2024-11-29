@@ -25,20 +25,26 @@ def index_exists(conn, table_name, index_name):
 def upgrade():
     conn = op.get_bind()
 
-    # Rename 'password_hash' to '_password_hash' in 'users' table
+    # Modify the 'users' table
     with op.batch_alter_table('users') as batch_op:
-        batch_op.add_column(sa.Column('_password_hash', sa.String(60), nullable=False))
+        # Add the new column '_password_hash' with a default value
+        batch_op.add_column(sa.Column('_password_hash', sa.String(60), nullable=False, server_default='default_hashed_password'))
+
+        # Drop the old column 'password_hash'
         batch_op.drop_column('password_hash')
+
+        # Add or recreate the unique index on 'email'
         batch_op.create_index('ix_users_email', ['email'], unique=True)
 
-    # Fix 'projects' table
+    # Modify the 'projects' table
     with op.batch_alter_table('projects') as batch_op:
         if constraint_exists(conn, 'projects', 'fk_projects_user_id'):
             batch_op.drop_constraint('fk_projects_user_id', type_='foreignkey')
         batch_op.create_foreign_key('fk_projects_user_id', 'users', ['user_id'], ['id'], ondelete='CASCADE')
-        batch_op.create_index('ix_projects_user_id', ['user_id'])
+        if not index_exists(conn, 'projects', 'ix_projects_user_id'):
+            batch_op.create_index('ix_projects_user_id', ['user_id'])
 
-    # Fix 'expenses' table
+    # Modify the 'expenses' table
     with op.batch_alter_table('expenses') as batch_op:
         if constraint_exists(conn, 'expenses', 'fk_expenses_project_id'):
             batch_op.drop_constraint('fk_expenses_project_id', type_='foreignkey')
@@ -59,22 +65,27 @@ def upgrade():
 
 def downgrade():
     conn = op.get_bind()
-    inspector = sa.inspect(conn)
 
     # Drop the 'user_projects' table if it exists
-    if 'user_projects' in inspector.get_table_names():
-        op.drop_table('user_projects')
+    op.drop_table('user_projects')
 
-    # Adjust the 'projects' table
+    # Restore constraints and indices in 'projects' table
     with op.batch_alter_table('projects') as batch_op:
-        if 'fk_projects_user_id' in [fk['name'] for fk in inspector.get_foreign_keys('projects')]:
+        if 'fk_projects_user_id' in [fk['name'] for fk in inspect(conn).get_foreign_keys('projects')]:
             batch_op.drop_constraint('fk_projects_user_id', type_='foreignkey')
-        if 'ix_projects_user_id' in [index['name'] for index in inspector.get_indexes('projects')]:
+        if 'ix_projects_user_id' in [index['name'] for index in inspect(conn).get_indexes('projects')]:
             batch_op.drop_index('ix_projects_user_id')
 
-    # Adjust the 'expenses' table
+    # Restore constraints and indices in 'expenses' table
     with op.batch_alter_table('expenses') as batch_op:
-        if 'fk_expenses_project_id' in [fk['name'] for fk in inspector.get_foreign_keys('expenses')]:
+        if 'fk_expenses_project_id' in [fk['name'] for fk in inspect(conn).get_foreign_keys('expenses')]:
             batch_op.drop_constraint('fk_expenses_project_id', type_='foreignkey')
-        if 'ix_expenses_project_id' in [index['name'] for index in inspector.get_indexes('expenses')]:
+        if 'ix_expenses_project_id' in [index['name'] for index in inspect(conn).get_indexes('expenses')]:
             batch_op.drop_index('ix_expenses_project_id')
+
+    # Rename '_password_hash' back to 'password_hash' in 'users' table
+    with op.batch_alter_table('users') as batch_op:
+        batch_op.add_column(sa.Column('password_hash', sa.String(60), nullable=False, server_default='default_hashed_password'))
+        batch_op.drop_column('_password_hash')
+        batch_op.drop_index('ix_users_email')
+
