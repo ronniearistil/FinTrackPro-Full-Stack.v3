@@ -131,12 +131,6 @@ class ProjectResource(Resource):
             db.session.rollback()
             return {"error": "Failed to create project", "details": str(e)}, 500
 
-    def delete(self, project_id):
-        project = Project.query.get_or_404(project_id)
-        db.session.delete(project)
-        db.session.commit()
-        return {"message": "Project deleted successfully"}, 204
-
     def patch(self, project_id):
         project_schema = ProjectSchema()
         project = Project.query.get_or_404(project_id)
@@ -156,6 +150,35 @@ class ProjectResource(Resource):
         except Exception as e:
             db.session.rollback()
             return {"error": "Failed to update project", "details": str(e)}, 500
+    
+    def delete(self, project_id):
+        project = Project.query.get_or_404(project_id)
+        db.session.delete(project)
+        db.session.commit()
+        return {"message": "Project deleted successfully"}, 204
+    
+from flask_restful import Resource
+from models import Project
+from extensions import db
+
+class ProjectArchiveResource(Resource):
+    def patch(self, project_id):
+        # Retrieve the project or return a 404 if not found
+        project = Project.query.get_or_404(project_id)
+
+        # Toggle the status
+        if project.status == "Archived":
+            project.status = "In Progress"  # Or another default active status
+            message = "Project is now In Progress"
+        else:
+            project.status = "Archived"
+            message = "Project is now Archived"
+
+        # Save changes to the database
+        db.session.commit()
+
+        return {"message": message, "status": project.status}, 200
+
 
 # Expense Resource
 class ExpenseResource(Resource):
@@ -246,6 +269,29 @@ def patch(self, expense_id):
         db.session.rollback()
         return {"error": "Failed to update expense", "details": str(e)}, 500
 
+class ExpenseArchiveResource(Resource):
+    def patch(self, expense_id):
+        # Retrieve the expense or return a 404 if not found
+        expense = Expense.query.get_or_404(expense_id)
+
+        # Use a derived state for the archive toggle
+        if hasattr(expense, "archived"):
+            if expense.archived:
+                expense.archived = False
+                message = "Expense is now Active"
+            else:
+                expense.archived = True
+                message = "Expense is now Archived"
+        else:
+            # Simulate the `archived` state using a flag for frontend interaction
+            expense.archived = True
+            message = "Expense is now Archived"
+
+        # Save changes to the database
+        db.session.commit()
+
+        return {"message": message, "archived": expense.archived}, 200
+    
 # Collaborators Resource
 class CollaboratorsResource(Resource):
     def get(self, project_id):

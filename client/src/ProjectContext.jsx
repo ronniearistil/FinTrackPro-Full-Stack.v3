@@ -71,6 +71,21 @@ export const ProjectProvider = ({ children }) => {
         }
     };
 
+// Archive a project
+const archiveProject = async (projectId) => {
+    try {
+        const response = await axios.patch(`${PROJECTS_URL}/${projectId}/archive`);
+        setProjects((prev) =>
+            prev.map((project) =>
+                project.id === projectId ? { ...project, status: response.data.message.split(" ").pop() } : project
+            )
+        );
+    } catch (error) {
+        console.error("Error archiving/unarchiving project:", error);
+    }
+};
+
+
     // Add an expense
     const addExpense = async (newExpense) => {
         try {
@@ -97,6 +112,25 @@ export const ProjectProvider = ({ children }) => {
             console.error("Error editing expense:", error);
         }
     };
+    
+// Archive an expense
+const archiveExpense = async (expenseId) => {
+    try {
+        const expense = expenses.find((e) => e.id === expenseId);
+        if (!expense) throw new Error("Expense not found");
+
+        // Call the backend to toggle archive state
+        const response = await axios.patch(`${EXPENSES_URL}/${expenseId}/archive`);
+
+        // Update the state with the response from the backend
+        setExpenses((prev) =>
+            prev.map((e) => (e.id === expenseId ? { ...e, archived: response.data.archived } : e))
+        );
+    } catch (error) {
+        console.error("Error archiving/unarchiving expense:", error);
+    }
+};
+
 
     // Delete an expense
     const deleteExpense = async (expenseId) => {
@@ -146,14 +180,14 @@ export const ProjectProvider = ({ children }) => {
     };
 
     // Force a refresh of project data after expense changes
-    const refreshProjects = async () => {
-        try {
-            const response = await axios.get(PROJECTS_URL);
-            setProjects(response.data || []);
-        } catch (error) {
-            console.error("Error refreshing projects:", error);
-        }
-    };
+    // const refreshProjects = async () => {
+    //     try {
+    //         const response = await axios.get(PROJECTS_URL);
+    //         setProjects(response.data || []);
+    //     } catch (error) {
+    //         console.error("Error refreshing projects:", error);
+    //     }
+    // };
 
     
     return (
@@ -165,9 +199,11 @@ export const ProjectProvider = ({ children }) => {
                 addProject,
                 editProject,
                 deleteProject,
+                archiveProject,
                 addExpense,
                 editExpense,
                 deleteExpense,
+                archiveExpense,
                 addUser,
                 editUser,
                 deleteUser,

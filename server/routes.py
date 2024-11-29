@@ -3,7 +3,7 @@ import os
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from flask_restful import Api
-from resources import UserResource, LoginResource, ProjectResource, ExpenseResource
+from resources import UserResource, LoginResource, ProjectResource, ExpenseResource, ProjectArchiveResource, ExpenseArchiveResource
 from collaboration_resources import CollaboratorsResource 
 
 # from server.Auth_Resources.current_user import CurrentUserResource
@@ -26,6 +26,21 @@ def register_routes(app):
     '/projects/<int:project_id>/collaborators',  # For GET and POST
     '/projects/<int:project_id>/collaborators/<int:user_id>'  # For DELETE
 )
+
+# Define the archive/unarchive route
+    api.add_resource(
+    ProjectArchiveResource,
+    '/projects/<int:project_id>/archive',
+    endpoint='project_archive'
+)
+
+    api.add_resource(
+    ExpenseArchiveResource,
+    '/expenses/<int:expense_id>/archive',
+    endpoint='expense_archive'
+)
+
+
 
 # # Authentication routes
 #     api.add_resource(SignupResource, '/signup')  # For user signup

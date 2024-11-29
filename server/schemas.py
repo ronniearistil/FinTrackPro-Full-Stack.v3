@@ -38,6 +38,7 @@ class ProjectSchema(ma.SQLAlchemyAutoSchema):
     end_date = fields.Date(allow_none=True)
     user_id = fields.Integer(required=True, validate=validate.Range(min=1))
 
+
     @validates("user_id")
     def validate_user_id(self, value):
         if not User.query.get(value):
@@ -53,5 +54,6 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     name = fields.String(required=False, validate=validate.Length(min=1))
     amount = fields.Float(required=False, validate=validate.Range(min=0))
     project_id = fields.Integer(required=False, validate=validate.Range(min=1))
+
     
 
