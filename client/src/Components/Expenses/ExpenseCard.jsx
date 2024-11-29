@@ -17,7 +17,7 @@ const ExpenseCard = ({ expense }) => {
   const { editExpense, archiveExpense, projects } = useProjects();
   const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [updatedExpense, setUpdatedExpense] = useState(expense);
+  const [updatedExpense, setUpdatedExpense] = useState({});
 
   const open = Boolean(anchorEl);
 
@@ -37,12 +37,18 @@ const ExpenseCard = ({ expense }) => {
     }
   };
 
-  const handleEditChange = (e) =>
-    setUpdatedExpense({ ...updatedExpense, [e.target.name]: e.target.value });
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedExpense((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleEditSave = () => {
-    editExpense(updatedExpense);
-    setEditModalOpen(false);
+  const handleEditSave = async () => {
+    try {
+      await editExpense({ ...updatedExpense, id: expense.id }); // Send updated fields with ID
+      setEditModalOpen(false);
+    } catch (error) {
+      console.error('Failed to update expense:', error);
+    }
   };
 
   // Toggle archive status
@@ -103,7 +109,7 @@ const ExpenseCard = ({ expense }) => {
           <TextField
             label="Expense Name"
             name="name"
-            value={updatedExpense.name || ''}
+            defaultValue={expense.name}
             onChange={handleEditChange}
             fullWidth
             sx={{ marginBottom: 2 }}
@@ -112,7 +118,7 @@ const ExpenseCard = ({ expense }) => {
             label="Amount"
             name="amount"
             type="number"
-            value={updatedExpense.amount || ''}
+            defaultValue={expense.amount}
             onChange={handleEditChange}
             fullWidth
             sx={{ marginBottom: 2 }}
@@ -120,7 +126,7 @@ const ExpenseCard = ({ expense }) => {
           <TextField
             label="Category"
             name="category"
-            value={updatedExpense.category || ''}
+            defaultValue={expense.category}
             onChange={handleEditChange}
             fullWidth
             sx={{ marginBottom: 2 }}

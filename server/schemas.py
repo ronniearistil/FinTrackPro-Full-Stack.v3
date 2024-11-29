@@ -48,10 +48,10 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Expense
         include_relationships = True
-        load_instance = False  # Ensure this returns a dictionary
+        load_instance = False 
 
-    name = fields.String(required=True, validate=validate.Length(min=1))
-    amount = fields.Float(required=True, validate=validate.Range(min=0))
-    project_id = fields.Integer(required=True, validate=validate.Range(min=1))
+    name = fields.String(required=False, validate=validate.Length(min=1))
+    amount = fields.Float(required=False, validate=validate.Range(min=0))
+    project_id = fields.Integer(required=False, validate=validate.Range(min=1))
     
 

@@ -212,29 +212,39 @@ class ExpenseResource(Resource):
 
         return {"message": "Expense deleted successfully"}, 204
 
-    def patch(self, expense_id):
-        expense_schema = ExpenseSchema()
-        expense = Expense.query.get_or_404(expense_id)
-        try:
-            data = request.get_json()
-            if not data:
-                return {"error": "No data provided or invalid JSON format"}, 400
+def patch(self, expense_id):
+    expense_schema = ExpenseSchema()
+    expense = Expense.query.get_or_404(expense_id)
+    try:
+        # Get incoming JSON data
+        data = request.get_json()
+        if not data:
+            return {"error": "No data provided or invalid JSON format"}, 400
 
-            expense_data = expense_schema.load(data, partial=True)
-            for key, value in expense_data.items():
+        # Validate and load data with partial=True for partial updates
+        expense_data = expense_schema.load(data, partial=True)
+
+        # Update only valid fields
+        for key, value in expense_data.items():
+            if hasattr(expense, key):
                 setattr(expense, key, value)
-            db.session.commit()
 
-            expense_data = expense_schema.dump(expense)
-            expense_data["category"] = get_category(expense.name)
-            return expense_data, 200
+        # Update the dynamic category
+        expense.category = get_category(expense.name)
 
-        except ValidationError as err:
-            return {"error": "Validation error", "details": err.messages}, 400
-        except Exception as e:
-            db.session.rollback()
-            return {"error": "Failed to update expense", "details": str(e)}, 500
+        # Commit changes to the database
+        db.session.commit()
 
+        # Serialize the updated expense
+        updated_expense = expense_schema.dump(expense)
+        updated_expense["category"] = get_category(expense.name)
+        return updated_expense, 200
+
+    except ValidationError as err:
+        return {"error": "Validation error", "details": err.messages}, 400
+    except Exception as e:
+        db.session.rollback()
+        return {"error": "Failed to update expense", "details": str(e)}, 500
 
 # Collaborators Resource
 class CollaboratorsResource(Resource):
