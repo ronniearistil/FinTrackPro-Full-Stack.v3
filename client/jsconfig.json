@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "baseUrl": "src",
+        "paths": {
+            "Charts/*": ["Charts/*"]
+        }
+    },
+    "include": ["src"]
+}

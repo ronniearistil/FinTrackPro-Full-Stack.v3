@@ -9,6 +9,9 @@ import {
   Typography,
   Box,
   Divider,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useProjects } from '../../ProjectContext';
@@ -22,32 +25,38 @@ const ProjectCard = ({ project }) => {
 
   const open = Boolean(anchorEl);
 
-  // Handle opening and closing of menu
+  // Handle menu open/close
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  // Toggle the modal for editing
+  // Open and close the edit modal
   const handleEditOpen = () => {
     if (project.status !== 'Archived') {
       setEditModalOpen(true);
       handleMenuClose();
     }
   };
+  const handleEditClose = () => setEditModalOpen(false);
 
-  const handleEditChange = (e) =>
-    setUpdatedProject({ ...updatedProject, [e.target.name]: e.target.value });
+  // Update field values
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedProject((prev) => ({ ...prev, [name]: value }));
+  };
 
+  // Save changes
   const handleEditSave = () => {
     editProject(updatedProject);
     setEditModalOpen(false);
   };
 
-  // Archive/unarchive logic
+  // Toggle archived status
   const handleArchiveToggle = async () => {
     await archiveProject(project.id);
     handleMenuClose();
   };
 
+  // Toggle project ID visibility
   const toggleProjectID = () => setShowProjectID((prev) => !prev);
 
   return (
@@ -56,11 +65,11 @@ const ProjectCard = ({ project }) => {
       sx={{
         opacity: project.status === 'Archived' ? 0.5 : 1,
         backgroundColor: project.status === 'Archived' ? '#f0f0f0' : 'white',
-        transition: 'opacity 0.3s ease',
         padding: 2,
         marginBottom: 2,
         borderRadius: 2,
         boxShadow: 2,
+        transition: 'opacity 0.3s ease',
       }}
     >
       <Typography
@@ -77,15 +86,14 @@ const ProjectCard = ({ project }) => {
 
       <Divider sx={{ marginBottom: 2, borderColor: '#00796b', borderWidth: 1 }} />
 
-      {/* Display key project details */}
+      {/* Display project details */}
       <Typography>Budgeted Cost: ${project.budgeted_cost || 'N/A'}</Typography>
       <Typography>Actual Cost: ${project.actual_cost || 'N/A'}</Typography>
-      <Typography>Actual Profit: ${project.actual_profit || 'N/A'}</Typography>
       <Typography>Status: {project.status}</Typography>
       <Typography>Progress: {project.progress_percentage || 0}%</Typography>
       <Typography>Category: {project.category || 'N/A'}</Typography>
 
-      {/* Button to toggle Project ID display */}
+      {/* Toggle Project ID visibility */}
       <Button
         variant="outlined"
         size="small"
@@ -94,16 +102,12 @@ const ProjectCard = ({ project }) => {
       >
         {showProjectID ? 'Hide Project ID' : 'Show Project ID'}
       </Button>
+      {showProjectID && <Typography mt={1}>Project ID: {project.id}</Typography>}
 
-      {showProjectID && (
-        <Typography mt={1}>Project ID: {project.id}</Typography>
-      )}
-
-      {/* More options menu */}
+      {/* Menu for more options */}
       <IconButton onClick={handleMenuOpen}>
         <MoreVertIcon />
       </IconButton>
-
       <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
         <MenuItem onClick={handleEditOpen} disabled={project.status === 'Archived'}>
           Edit
@@ -114,9 +118,11 @@ const ProjectCard = ({ project }) => {
       </Menu>
 
       {/* Modal for editing the project */}
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+      <Dialog open={editModalOpen} onClose={handleEditClose}>
         <Box sx={{ padding: 2 }}>
-          <Typography variant="h6">Edit Project</Typography>
+          <Typography variant="h6" sx={{ marginBottom: 2 }}>
+            Edit Project
+          </Typography>
           <TextField
             label="Project Name"
             name="name"
@@ -135,16 +141,7 @@ const ProjectCard = ({ project }) => {
             sx={{ marginBottom: 2 }}
           />
           <TextField
-            label="Actual Profit"
-            name="actual_profit"
-            type="number"
-            value={updatedProject.actual_profit || ''}
-            onChange={handleEditChange}
-            fullWidth
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            label="Progress (%)"
+            label="Progress Percentage"
             name="progress_percentage"
             type="number"
             value={updatedProject.progress_percentage || ''}
@@ -160,13 +157,26 @@ const ProjectCard = ({ project }) => {
             fullWidth
             sx={{ marginBottom: 2 }}
           />
+          <FormControl fullWidth sx={{ marginBottom: 2 }}>
+            <InputLabel id="status-select-label">Status</InputLabel>
+            <Select
+              labelId="status-select-label"
+              name="status"
+              value={updatedProject.status || ''}
+              onChange={handleEditChange}
+            >
+              <MenuItem value="In Progress">In Progress</MenuItem>
+              <MenuItem value="Completed">Completed</MenuItem>
+              <MenuItem value="At Risk">At Risk</MenuItem>
+            </Select>
+          </FormControl>
           <Button
             onClick={handleEditSave}
             variant="contained"
             color="primary"
             fullWidth
           >
-            Save
+            Save Changes
           </Button>
         </Box>
       </Dialog>
@@ -175,3 +185,4 @@ const ProjectCard = ({ project }) => {
 };
 
 export default ProjectCard;
+

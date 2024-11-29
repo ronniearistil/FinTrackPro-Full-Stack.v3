@@ -24,3 +24,5 @@ const NavbarChart = () => {
 };
 
 export default NavbarChart;
+
+

@@ -1,7 +1,10 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import ProjectChart from "./Components/Charts/ProjectChart";
-import ExpenseChart from "./Components/Charts/ExpenseChart";
+import React from 'react';
+import { Box, Typography } from '@mui/material';
+import ProjectChart from 'Charts/ProjectChart.jsx';
+import ExpenseChart from 'Charts/ExpensesChart.jsx';
+
+
+
 
 const HomePage = () => {
     return (
@@ -12,7 +15,7 @@ const HomePage = () => {
             <Typography variant="h6" align="center" gutterBottom>
                 Explore project and expense data at a glance
             </Typography>
-            <Box sx={{ display: "flex", justifyContent: "space-around", mt: 4 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 4 }}>
                 <ProjectChart />
                 <ExpenseChart />
             </Box>
@@ -21,4 +24,8 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+
+
 

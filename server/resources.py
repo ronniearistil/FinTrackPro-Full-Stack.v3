@@ -144,6 +144,11 @@ class ProjectResource(Resource):
             project_data = project_schema.load(data, partial=True)
             for key, value in project_data.items():
                 setattr(project, key, value)
+                
+            # Update actual cost dynamically if needed
+            if "actual_cost" in data:
+                project.update_actual_cost()
+            
             db.session.commit()
             return project_schema.dump(project), 200
         except ValidationError as err:
@@ -173,6 +178,11 @@ class ExpenseResource(Resource):
             expense = Expense(**expense_data)
             db.session.add(expense)
             db.session.commit()
+            # Update project's actual cost after adding an expense
+            project = Project.query.get(expense.project_id)
+            if project:
+                project.update_actual_cost()
+                
             return expense_schema.dump(expense), 201
 
         except ValidationError as err:
@@ -183,8 +193,16 @@ class ExpenseResource(Resource):
 
     def delete(self, expense_id):
         expense = Expense.query.get_or_404(expense_id)
+        
+        project_id = expense.project_id  # Save project ID before deletion
+        
         db.session.delete(expense)
         db.session.commit()
+        # Recalculate actual cost
+        project = Project.query.get(project_id)
+        if project:
+            project.update_actual_cost()
+            
         return {"message": "Expense deleted successfully"}, 204
 
     def patch(self, expense_id):

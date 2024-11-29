@@ -54,6 +54,8 @@ class Project(db.Model):
     budgeted_cost = db.Column(db.Float, nullable=False)
     actual_cost = db.Column(db.Float, default=0.0)
     status = db.Column(db.String(50), nullable=False)
+    progress_percentage = db.Column(db.Integer, default=0)  # New field
+    category = db.Column(db.String(50), default="General")  # New field
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
@@ -69,6 +71,12 @@ class Project(db.Model):
     # One-to-Many Relationship with expenses
     expenses = db.relationship('Expense', back_populates='project', lazy='dynamic', cascade='all, delete-orphan')
 
+# methods to calculate and update actual_cost based on the total of all related expenses.
+    def update_actual_cost(self):
+        """Recalculate and update the actual cost based on expenses."""
+        self.actual_cost = sum(expense.amount for expense in self.expenses)
+        db.session.commit()
+        
     def __repr__(self):
         return f"<Project(id={self.id}, name={self.name}, user_id={self.user_id})>"
 
