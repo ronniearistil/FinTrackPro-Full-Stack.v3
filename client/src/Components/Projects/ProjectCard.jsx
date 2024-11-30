@@ -14,31 +14,30 @@ import {
   Select,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useProjects } from '../../ProjectContext';
 
 const ProjectCard = ({ project }) => {
   const { editProject, archiveProject } = useProjects();
-  const [anchorEl, setAnchorEl] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [showProjectID, setShowProjectID] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [updatedProject, setUpdatedProject] = useState(project);
 
   const open = Boolean(anchorEl);
 
-  // Handle menu open/close
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  // Open and close the edit modal
   const handleEditOpen = () => {
     if (project.status !== 'Archived') {
       setEditModalOpen(true);
       handleMenuClose();
     }
   };
+
   const handleEditClose = () => setEditModalOpen(false);
 
-  // Update field values with validation for progress_percentage
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setUpdatedProject((prev) => {
@@ -50,7 +49,6 @@ const ProjectCard = ({ project }) => {
     });
   };
 
-  // Save changes
   const handleEditSave = async () => {
     try {
       await editProject(updatedProject);
@@ -61,14 +59,10 @@ const ProjectCard = ({ project }) => {
     }
   };
 
-  // Toggle archived status
   const handleArchiveToggle = async () => {
     await archiveProject(project.id);
     handleMenuClose();
   };
-
-  // Toggle project ID visibility
-  const toggleProjectID = () => setShowProjectID((prev) => !prev);
 
   return (
     <Box
@@ -97,38 +91,27 @@ const ProjectCard = ({ project }) => {
 
       <Divider sx={{ marginBottom: 2, borderColor: '#00796b', borderWidth: 1 }} />
 
-      {/* Display project details */}
       <Typography>Budgeted Cost: ${project.budgeted_cost || 'N/A'}</Typography>
       <Typography>Actual Cost: ${project.actual_cost || 'N/A'}</Typography>
       <Typography>Status: {project.status}</Typography>
       <Typography>Progress: {project.progress_percentage || 0}%</Typography>
       <Typography>Category: {project.category || 'N/A'}</Typography>
 
-      {/* Toggle Project ID visibility */}
-      <Button
-        variant="outlined"
-        size="small"
-        onClick={toggleProjectID}
-        sx={{ marginTop: 1 }}
-      >
-        {showProjectID ? 'Hide Project ID' : 'Show Project ID'}
-      </Button>
-      {showProjectID && <Typography mt={1}>Project ID: {project.id}</Typography>}
-
-      {/* Menu for more options */}
+      {/* Menu for Edit and Archive */}
       <IconButton onClick={handleMenuOpen}>
         <MoreVertIcon />
       </IconButton>
       <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
         <MenuItem onClick={handleEditOpen} disabled={project.status === 'Archived'}>
-          Edit
+          <EditIcon sx={{ marginRight: 1 }} /> Edit
         </MenuItem>
         <MenuItem onClick={handleArchiveToggle}>
+          <DeleteIcon sx={{ marginRight: 1 }} />
           {project.status === 'Archived' ? 'Unarchive' : 'Archive'}
         </MenuItem>
       </Menu>
 
-      {/* Modal for editing the project */}
+      {/* Modal for Editing */}
       <Dialog open={editModalOpen} onClose={handleEditClose}>
         <Box sx={{ padding: 2 }}>
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
@@ -197,5 +180,6 @@ const ProjectCard = ({ project }) => {
 };
 
 export default ProjectCard;
+
 
 

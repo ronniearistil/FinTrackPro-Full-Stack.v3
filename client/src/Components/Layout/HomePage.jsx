@@ -1,9 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import ProjectChart from 'Charts/ProjectChart.jsx';
-import ExpenseChart from 'Charts/ExpensesChart.jsx';
-
-
+import ProjectChart from '../../Charts/ProjectChart.jsx';
+import ExpenseChart from '../../Charts/ExpensesChart.jsx';
 
 
 const HomePage = () => {

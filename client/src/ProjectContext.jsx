@@ -131,7 +131,6 @@ const archiveExpense = async (expenseId) => {
     }
 };
 
-
     // Delete an expense
     const deleteExpense = async (expenseId) => {
         try {

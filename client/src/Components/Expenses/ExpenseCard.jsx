@@ -11,6 +11,8 @@ import {
   Divider,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useProjects } from '../../ProjectContext';
 
 const ExpenseCard = ({ expense }) => {
@@ -21,7 +23,6 @@ const ExpenseCard = ({ expense }) => {
 
   const open = Boolean(anchorEl);
 
-  // Find associated project name
   const associatedProject = projects?.find(
     (project) => project.id === expense.project_id
   )?.name || 'Unknown Project';
@@ -29,7 +30,6 @@ const ExpenseCard = ({ expense }) => {
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  // Open the edit modal
   const handleEditOpen = () => {
     if (!expense.archived) {
       setEditModalOpen(true);
@@ -44,14 +44,13 @@ const ExpenseCard = ({ expense }) => {
 
   const handleEditSave = async () => {
     try {
-      await editExpense({ ...updatedExpense, id: expense.id }); // Send updated fields with ID
+      await editExpense({ ...updatedExpense, id: expense.id });
       setEditModalOpen(false);
     } catch (error) {
       console.error('Failed to update expense:', error);
     }
   };
 
-  // Toggle archive status
   const handleArchiveToggle = async () => {
     await archiveExpense(expense.id);
     handleMenuClose();
@@ -89,15 +88,16 @@ const ExpenseCard = ({ expense }) => {
       <Typography>Project: {associatedProject}</Typography>
       <Typography>Project ID: {expense.project_id}</Typography>
 
+      {/* Menu for Edit and Archive */}
       <IconButton onClick={handleMenuOpen}>
         <MoreVertIcon />
       </IconButton>
-
       <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
         <MenuItem onClick={handleEditOpen} disabled={expense.archived}>
-          Edit
+          <EditIcon sx={{ marginRight: 1 }} /> Edit
         </MenuItem>
         <MenuItem onClick={handleArchiveToggle}>
+          <DeleteIcon sx={{ marginRight: 1 }} />
           {expense.archived ? 'Unarchive' : 'Archive'}
         </MenuItem>
       </Menu>
@@ -146,3 +146,4 @@ const ExpenseCard = ({ expense }) => {
 };
 
 export default ExpenseCard;
+
