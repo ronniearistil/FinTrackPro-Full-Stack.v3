@@ -56,5 +56,3 @@ const ProjectChart = () => {
 };
 
 export default ProjectChart;
-
-

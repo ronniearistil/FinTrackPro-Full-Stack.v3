@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
 
 const AccountManagement = ({ userId, onAccountUpdate }) => {
     const [formData, setFormData] = useState({
@@ -12,6 +15,29 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
         newPassword: '',
     });
 
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/users/${userId}`);
+                setFormData({
+                    name: response.data.name || '',
+                    email: response.data.email || '',
+                    username: response.data.username || '',
+                    currentPassword: '',
+                    newPassword: '',
+                });
+            } catch (err) {
+                console.error('Error fetching user data:', err);
+                toast.error('Failed to load account information.');
+            }
+        };
+
+        fetchUserData();
+    }, [userId]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -19,23 +45,29 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        if (!formData.name || !formData.email || !formData.username) {
+            toast.error('Please fill out all required fields.');
+            return;
+        }
 
+        setLoading(true);
         try {
-            await axios.patch(`http://localhost:5555/users/${userId}`, formData);
+            await axios.patch(`${API_URL}/users/${userId}`, formData);
             toast.success('Account updated successfully!');
-            onAccountUpdate(); // Refresh user info in context or UI
+            onAccountUpdate();
         } catch (err) {
             console.error('Error updating account:', err);
             toast.error('Error updating account. Please try again.');
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`http://localhost:5555/users/${userId}`);
+            await axios.delete(`${API_URL}/users/${userId}`);
             toast.success('Account deleted successfully.');
-            // Redirect to signup/login or clear session
-            window.location.href = '/signup'; // Example redirection after deletion
+            navigate('/signup');
         } catch (err) {
             console.error('Error deleting account:', err);
             toast.error('Error deleting account. Please try again.');
@@ -103,8 +135,8 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
                 onChange={handleChange}
             />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                <Button type="submit" variant="contained" color="primary">
-                    Update
+                <Button type="submit" variant="contained" color="primary" disabled={loading}>
+                    {loading ? 'Updating...' : 'Update'}
                 </Button>
                 <Button variant="outlined" color="error" onClick={handleDelete}>
                     Delete Account
@@ -115,3 +147,4 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
 };
 
 export default AccountManagement;
+

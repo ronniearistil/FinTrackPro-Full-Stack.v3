@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Tooltip } from 'recharts';
 
-const data = [
-    { name: 'In Progress', value: 10 },
-    { name: 'Completed', value: 5 },
-    { name: 'At Risk', value: 2 },
-];
-
 const NavbarChart = () => {
+    const [statusData, setStatusData] = useState([]);
+
+    useEffect(() => {
+        // Fetch project status data from the API
+        const fetchStatusData = async () => {
+            const response = await fetch('/projects_status');  // Adjust with your correct endpoint
+            const data = await response.json();
+            setStatusData(data);  // Assuming data format to match the pie chart
+        };
+
+        fetchStatusData();
+    }, []);
+
     return (
         <div
             style={{
@@ -21,13 +28,13 @@ const NavbarChart = () => {
             <PieChart width={90} height={90}>
                 <Pie
                     key="navbar-pie-chart"
-                    data={data}
+                    data={statusData}
                     dataKey="value"
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={30} // Adjusted size
-                    innerRadius={20} // Added for donut shape
+                    outerRadius={30}
+                    innerRadius={20}
                     fill="#8884d8"
                 />
                 <Tooltip />
@@ -37,6 +44,7 @@ const NavbarChart = () => {
 };
 
 export default NavbarChart;
+
 
 
 

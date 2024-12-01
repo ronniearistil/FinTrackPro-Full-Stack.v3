@@ -1,70 +1,140 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# FinTrackPro
+
+This project is a full-stack financial management and project tracking application. It enables users to manage projects, track expenses, and analyze financial performance in real time.
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the **server** directory, you can run:
+
+### `flask run`
+
+Runs the backend server in development mode.  
+The server will start on [http://127.0.0.1:5555](http://127.0.0.1:5555).
+
+The server handles the database and API endpoints for users, projects, and expenses. See the [API Documentation](#api-documentation) for more details.
+
+### `python seed.py`
+
+Seeds the database with sample data for testing purposes.  
+Ensure your database is properly configured before running this script.
+
+In the **client** directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the React application in the development mode.  
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
+The page will reload when you make changes.  
 You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Builds the app for production to the `build` folder.  
+It bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
+The build is minified, and the filenames include hashes.  
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## API Documentation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Users
+- `GET /users`: Retrieve all users.
+- `POST /users`: Add a new user.
+- `PATCH /users/:id`: Update a user's information.
+- `DELETE /users/:id`: Delete a user.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Projects
+- `GET /projects`: Retrieve all projects.
+- `POST /projects`: Add a new project.
+- `PATCH /projects/:id`: Update project details.
+- `DELETE /projects/:id`: Delete a project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Expenses
+- `GET /expenses`: Retrieve all expenses.
+- `POST /expenses`: Add a new expense.
+- `PATCH /expenses/:id`: Update expense details.
+- `DELETE /expenses/:id`: Delete an expense.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Authentication
+- `POST /signup`: Register a new user.
+- `POST /login`: Authenticate user and create a session.
+- `POST /logout`: Log out the current user.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## React Router/Routes
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Main Routes
+- `/login`: Renders the login form for user authentication.
+- `/signup`: Renders the signup form for user registration.
+- `/projects`: Displays the list of all projects.
+- `/expenses`: Displays the list of all expenses.
+- `/about`: Displays information about FinTrackPro.
 
-### Code Splitting
+### Protected Routes
+Routes like `/projects` and `/expenses` are only accessible to logged-in users. Unauthenticated users will be redirected to `/login`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Database Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Tables
+#### Users
+- `id`: Primary key.
+- `name`: User's name.
+- `email`: User's email address.
+- `password_hash`: Encrypted password for authentication.
 
-### Making a Progressive Web App
+#### Projects
+- `id`: Primary key.
+- `name`: Project name.
+- `budgeted_cost`: Project's budgeted cost.
+- `actual_cost`: Project's actual cost.
+- `status`: Status of the project (e.g., "In Progress", "Completed").
+- `user_id`: Foreign key linking to the user who owns the project.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### Expenses
+- `id`: Primary key.
+- `name`: Expense name.
+- `amount`: Amount spent on the expense.
+- `project_id`: Foreign key linking the expense to its associated project.
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Setup Instructions
 
-### Deployment
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/yourusername/FinTrackPro.git
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+2. Set up the backend:
+    `cd server`
+pip install -r requirements.txt
+    `flask run`
 
-### `npm run build` fails to minify
+3. Set up the frontend:
+    `cd client`
+    `npm install`
+    `npm start`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+4. Access the app in your browser at [http://localhost:3000]
+
+# Features
+## MVP Features
+- Secure user authentication and session management.
+- Add, edit, delete, and view projects and expenses.
+- Dynamic dashboards for visualizing project budgets and expenses.
+- Stretch Goals
+- Financial forecasting using libraries like NumPy.
+- Multi-user collaboration with role-based access.
+- Advanced analytics and profitability metrics.
+
+# Deployment
+To deploy the app, ensure both the backend and frontend are built and configured for production.
+For backend deployment, use a WSGI server like Gunicorn.
+For frontend deployment, serve the build folder using a static site hosting service like Netlify or Vercel.

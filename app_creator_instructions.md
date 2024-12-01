@@ -98,3 +98,7 @@ npm list --depth=0
 
 # To confirm routes are running:
 - flask routes
+
+Version Control Commends 
+- git log --oneline 
+- git checkout -b <version name>
