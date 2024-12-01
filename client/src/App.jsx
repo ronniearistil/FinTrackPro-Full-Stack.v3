@@ -705,7 +705,20 @@ const App = () => {
                                 </ProtectedRoute>
                             }
                         />
-                        
+
+{/* Account management Route */}
+                        <Route
+    path="/account"
+    element={
+        <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <AccountManagement
+                userId={currentUser?.id}
+                onAccountUpdate={() => showToast('Account updated successfully!')}
+            />
+        </ProtectedRoute>
+    }
+/>
+
                         <Route
                             path="/account"
                             element={

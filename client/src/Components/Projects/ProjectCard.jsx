@@ -24,6 +24,9 @@ const ProjectCard = ({ project }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [updatedProject, setUpdatedProject] = useState(project);
 
+  // **Added: State for showing/hiding Project ID**
+  const [showProjectID, setShowProjectID] = useState(false);
+
   const open = Boolean(anchorEl);
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
@@ -64,6 +67,9 @@ const ProjectCard = ({ project }) => {
     handleMenuClose();
   };
 
+  // **Added: Function to toggle visibility of Project ID**
+  const toggleProjectID = () => setShowProjectID((prev) => !prev);
+
   return (
     <Box
       className="project-card"
@@ -96,6 +102,21 @@ const ProjectCard = ({ project }) => {
       <Typography>Status: {project.status}</Typography>
       <Typography>Progress: {project.progress_percentage || 0}%</Typography>
       <Typography>Category: {project.category || 'N/A'}</Typography>
+
+      {/* **Added: Button to toggle Project ID visibility** */}
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={toggleProjectID}
+        sx={{ marginTop: 1 }}
+      >
+        {showProjectID ? 'Hide Project ID' : 'Show Project ID'}
+      </Button>
+
+      {/* **Added: Conditional rendering for Project ID** */}
+      {showProjectID && (
+        <Typography mt={1}>Project ID: {project.id}</Typography>
+      )}
 
       {/* Menu for Edit and Archive */}
       <IconButton onClick={handleMenuOpen}>
@@ -180,6 +201,3 @@ const ProjectCard = ({ project }) => {
 };
 
 export default ProjectCard;
-
-
-
