@@ -147,7 +147,7 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Box, IconButton, Menu, MenuItem, Typography, InputBase, Select, FormControl } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import NavLink from './NavLink';
-// **Added: Import useNavigate for navigation**
+// **Import useNavigate for navigation**
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = ({ 
@@ -165,7 +165,7 @@ const NavBar = ({
     const [status, setStatus] = useState('');
     const [sortOption, setSortOption] = useState('');
 
-    // **Added: Initialize useNavigate**
+    // Initialize useNavigate
     const navigate = useNavigate();
 
     const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
@@ -275,15 +275,23 @@ const NavBar = ({
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
                     >
-                        {!isAuthenticated && <MenuItem onClick={onSignUp}>Sign Up</MenuItem>}
-                        {!isAuthenticated && <MenuItem onClick={onLogin}>Sign In</MenuItem>}
-
-                        {/* **Added: Manage Account Option** */}
-                        {isAuthenticated && (
-                            <MenuItem onClick={() => navigate('/account')}>Manage Account</MenuItem>
+                        {/* Options for unauthenticated users */}
+                        {!isAuthenticated && (
+                            <>
+                                <MenuItem onClick={onSignUp}>Sign Up</MenuItem>
+                                <MenuItem onClick={onLogin}>Sign In</MenuItem>
+                                {/* Added: Account Recovery */}
+                                <MenuItem onClick={() => navigate('/account/recovery')}>Recover Account</MenuItem>
+                            </>
                         )}
 
-                        {isAuthenticated && <MenuItem onClick={onSignOut}>Logout</MenuItem>}
+                        {/* Options for authenticated users */}
+                        {isAuthenticated && (
+                            <>
+                                <MenuItem onClick={() => navigate('/account')}>Manage Account</MenuItem>
+                                <MenuItem onClick={onSignOut}>Logout</MenuItem>
+                            </>
+                        )}
                     </Menu>
                 </Box>
             </Toolbar>
@@ -292,6 +300,3 @@ const NavBar = ({
 };
 
 export default NavBar;
-
-
-

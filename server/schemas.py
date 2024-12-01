@@ -1,8 +1,10 @@
 # schemas.py
 
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from extensions import ma
 from models import User, Project, Expense
 from marshmallow import fields, validate, validates, ValidationError
+# from models import RevokedToken
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -55,5 +57,8 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     amount = fields.Float(required=False, validate=validate.Range(min=0))
     project_id = fields.Integer(required=False, validate=validate.Range(min=1))
 
-    
 
+# class RevokedTokenSchema(SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = RevokedToken
+#         load_instance = True

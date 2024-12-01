@@ -556,6 +556,7 @@ import ExpenseForm from './Components/Forms/ExpenseForm.jsx';
 import SignUpForm from './Components/UserManagement/UserSignUpForm.jsx';
 import LoginForm from './Components/UserManagement/LoginForm.jsx';
 import AccountManagement from './Components/UserManagement/AccountManagement.jsx';
+import AccountRecovery from './Components/UserManagement/AccountRecovery.jsx';
 import ProtectedRoute from './Components/Layout/ProtectedRoute.jsx';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
@@ -718,7 +719,7 @@ const App = () => {
         </ProtectedRoute>
     }
 />
-
+<Route path="/account/recovery" element={<AccountRecovery />} />
                         <Route
                             path="/account"
                             element={
