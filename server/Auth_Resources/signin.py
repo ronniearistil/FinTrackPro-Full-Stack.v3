@@ -10,8 +10,14 @@ class LoginResource(Resource):
         password = data.get("password")
 
         user = User.query.filter_by(email=email).first()
-        if not user or not user.check_password(password):
-            return {"error": "Invalid email or password"}, 401
+        if not user:
+            return {"error": "Invalid email or password."}, 401
+
+        # Add a debug print for password match
+        print("Checking password for user:", user.email)
+        if not user.check_password(password):
+            return {"error": "Invalid email or password."}, 401
 
         token = create_access_token(identity=user.id)
         return {"token": token}, 200
+
