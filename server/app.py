@@ -9,12 +9,12 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from sqlalchemy.sql import text
 
+
 # Load environment variables
 load_dotenv()
 
 # Import extensions
 from extensions import db, migrate, ma, bcrypt
-from flask_jwt_extended import JWTManager  # Add this import
 
 # Application Factory Function
 def create_app(config_name="default"):
@@ -33,9 +33,6 @@ def create_app(config_name="default"):
     migrate.init_app(app, db)
     ma.init_app(app)
     bcrypt.init_app(app)
-
-    # Initialize JWTManager
-    jwt = JWTManager(app)  # Add this line
 
     # Set up CORS
     CORS_ALLOWED_ORIGINS = app.config.get("CORS_ALLOWED_ORIGINS", "*")
@@ -61,7 +58,6 @@ if __name__ == "__main__":
     # Create app with the specified environment or default to "default"
     app = create_app(os.getenv("FLASK_ENV", "default"))
     app.run(debug=app.config["DEBUG"], port=5555)
-
 
 
 

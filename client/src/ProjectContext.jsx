@@ -1,214 +1,3 @@
-// import React, { createContext, useState, useContext, useEffect } from "react";
-// import axios from "axios";
-// 
-// const PROJECTS_URL = "http://localhost:5555/projects";
-// const EXPENSES_URL = "http://localhost:5555/expenses";
-// const USERS_URL = "http://localhost:5555/users";
-// 
-// export const ProjectContext = createContext();
-// 
-// export const ProjectProvider = ({ children }) => {
-//     const [projects, setProjects] = useState([]);
-//     const [expenses, setExpenses] = useState([]);
-//     const [users, setUsers] = useState([]);
-// 
-//     // Fetch data on component mount
-//     useEffect(() => {
-//         fetchData();
-//     }, []);
-// 
-//     const fetchData = async () => {
-//         try {
-//             const [projectsRes, expensesRes, usersRes] = await Promise.all([
-//                 axios.get(PROJECTS_URL),
-//                 axios.get(EXPENSES_URL),
-//                 axios.get(USERS_URL),
-//             ]);
-//             setProjects(projectsRes.data || []);
-//             setExpenses(expensesRes.data || []);
-//             setUsers(usersRes.data.users || []);
-//         } catch (error) {
-//             console.error("Error fetching data:", error);
-//         }
-//     };
-// 
-//     // Add a project
-//     const addProject = async (newProject) => {
-//         try {
-//             const response = await axios.post(PROJECTS_URL, newProject);
-//             setProjects((prev) => [...prev, response.data]);
-//         } catch (error) {
-//             console.error("Error adding project:", error);
-//         }
-//     };
-// 
-//     // Edit a project
-//     const editProject = async (updatedProject) => {
-//         console.log("Payload for editing project:", updatedProject); // Log the payload
-//         try {
-//             const response = await axios.patch(
-//                 `${PROJECTS_URL}/${updatedProject.id}`,
-//                 updatedProject
-//             );
-//             setProjects((prev) =>
-//                 prev.map((project) =>
-//                     project.id === response.data.id ? response.data : project
-//                 )
-//             );
-//         } catch (error) {
-//             console.error("Error editing project:", error);
-//         }
-//     };
-//     
-// 
-//     // Delete a project
-//     const deleteProject = async (projectId) => {
-//         try {
-//             await axios.delete(`${PROJECTS_URL}/${projectId}`);
-//             setProjects((prev) => prev.filter((project) => project.id !== projectId));
-//         } catch (error) {
-//             console.error("Error deleting project:", error);
-//         }
-//     };
-// 
-// // Archive a project
-// const archiveProject = async (projectId) => {
-//     try {
-//         const response = await axios.patch(`${PROJECTS_URL}/${projectId}/archive`);
-//         setProjects((prev) =>
-//             prev.map((project) =>
-//                 project.id === projectId ? { ...project, status: response.data.message.split(" ").pop() } : project
-//             )
-//         );
-//     } catch (error) {
-//         console.error("Error archiving/unarchiving project:", error);
-//     }
-// };
-// 
-// 
-//     // Add an expense
-//     const addExpense = async (newExpense) => {
-//         try {
-//             const response = await axios.post(EXPENSES_URL, newExpense);
-//             setExpenses((prev) => [...prev, response.data]);
-//         } catch (error) {
-//             console.error("Error adding expense:", error);
-//         }
-//     };
-// 
-//     // Edit an expense
-//     const editExpense = async (updatedExpense) => {
-//         try {
-//             const response = await axios.patch(
-//                 `${EXPENSES_URL}/${updatedExpense.id}`,
-//                 updatedExpense
-//             );
-//             setExpenses((prev) =>
-//                 prev.map((expense) =>
-//                     expense.id === response.data.id ? response.data : expense
-//                 )
-//             );
-//         } catch (error) {
-//             console.error("Error editing expense:", error);
-//         }
-//     };
-//     
-// // Archive an expense
-// const archiveExpense = async (expenseId) => {
-//     try {
-//         const expense = expenses.find((e) => e.id === expenseId);
-//         if (!expense) throw new Error("Expense not found");
-// 
-//         // Call the backend to toggle archive state
-//         const response = await axios.patch(`${EXPENSES_URL}/${expenseId}/archive`);
-// 
-//         // Update the state with the response from the backend
-//         setExpenses((prev) =>
-//             prev.map((e) => (e.id === expenseId ? { ...e, archived: response.data.archived } : e))
-//         );
-//     } catch (error) {
-//         console.error("Error archiving/unarchiving expense:", error);
-//     }
-// };
-// 
-//     // Delete an expense
-//     const deleteExpense = async (expenseId) => {
-//         try {
-//             await axios.delete(`${EXPENSES_URL}/${expenseId}`);
-//             setExpenses((prev) => prev.filter((expense) => expense.id !== expenseId));
-//         } catch (error) {
-//             console.error("Error deleting expense:", error);
-//         }
-//     };
-// 
-//     // Add a user
-//     const addUser = async (newUser) => {
-//         try {
-//             const response = await axios.post(USERS_URL, newUser);
-//             setUsers((prev) => [...prev, response.data]);
-//         } catch (error) {
-//             console.error("Error adding user:", error);
-//         }
-//     };
-// 
-//     // Edit a user
-//     const editUser = async (updatedUser) => {
-//         try {
-//             const response = await axios.patch(
-//                 `${USERS_URL}/${updatedUser.id}`,
-//                 updatedUser
-//             );
-//             setUsers((prev) =>
-//                 prev.map((user) =>
-//                     user.id === response.data.id ? response.data : user
-//                 )
-//             );
-//         } catch (error) {
-//             console.error("Error editing user:", error);
-//         }
-//     };
-// 
-//     // Delete a user
-//     const deleteUser = async (userId) => {
-//         try {
-//             await axios.delete(`${USERS_URL}/${userId}`);
-//             setUsers((prev) => prev.filter((user) => user.id !== userId));
-//         } catch (error) {
-//             console.error("Error deleting user:", error);
-//         }
-//     };
-// 
-//     
-//     return (
-//         <ProjectContext.Provider
-//             value={{
-//                 projects,
-//                 expenses,
-//                 users,
-//                 addProject,
-//                 editProject,
-//                 deleteProject,
-//                 archiveProject,
-//                 addExpense,
-//                 editExpense,
-//                 deleteExpense,
-//                 archiveExpense,
-//                 addUser,
-//                 editUser,
-//                 deleteUser,
-//             }}
-//         >
-//             {children}
-//         </ProjectContext.Provider>
-//     );
-// };
-// 
-// export const useProjects = () => useContext(ProjectContext);
-
-
-
-// ||
-
 import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 
@@ -222,29 +11,11 @@ export const ProjectProvider = ({ children }) => {
     const [projects, setProjects] = useState([]);
     const [expenses, setExpenses] = useState([]);
     const [users, setUsers] = useState([]);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [currentUser, setCurrentUser] = useState(null);
 
-    // Fetch data on component mount and set up authentication
+    // Fetch data on component mount
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            setIsAuthenticated(true);
-            fetchCurrentUser();
-        }
         fetchData();
     }, []);
-
-    const fetchCurrentUser = async () => {
-        try {
-            const response = await axios.get(`${USERS_URL}/current`);
-            setCurrentUser(response.data);
-        } catch (error) {
-            console.error("Error fetching current user:", error);
-            setIsAuthenticated(false);
-        }
-    };
 
     const fetchData = async () => {
         try {
@@ -255,28 +26,10 @@ export const ProjectProvider = ({ children }) => {
             ]);
             setProjects(projectsRes.data || []);
             setExpenses(expensesRes.data || []);
-            setUsers(usersRes.data || []);
+            setUsers(usersRes.data.users || []);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
-    };
-
-    const handleLoginSuccess = (response) => {
-        const token = response.data?.token;
-        const user = response.data?.user || {};
-        if (token) {
-            localStorage.setItem('authToken', token);
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        }
-        setIsAuthenticated(true);
-        setCurrentUser(user);
-    };
-
-    const handleSignOut = () => {
-        localStorage.removeItem('authToken');
-        delete axios.defaults.headers.common['Authorization'];
-        setIsAuthenticated(false);
-        setCurrentUser(null);
     };
 
     // Add a project
@@ -291,6 +44,7 @@ export const ProjectProvider = ({ children }) => {
 
     // Edit a project
     const editProject = async (updatedProject) => {
+        console.log("Payload for editing project:", updatedProject); // Log the payload
         try {
             const response = await axios.patch(
                 `${PROJECTS_URL}/${updatedProject.id}`,
@@ -305,6 +59,7 @@ export const ProjectProvider = ({ children }) => {
             console.error("Error editing project:", error);
         }
     };
+    
 
     // Delete a project
     const deleteProject = async (projectId) => {
@@ -316,21 +71,20 @@ export const ProjectProvider = ({ children }) => {
         }
     };
 
-    // Archive a project
-    const archiveProject = async (projectId) => {
-        try {
-            const response = await axios.patch(`${PROJECTS_URL}/${projectId}/archive`);
-            setProjects((prev) =>
-                prev.map((project) =>
-                    project.id === projectId
-                        ? { ...project, status: response.data.message.split(" ").pop() }
-                        : project
-                )
-            );
-        } catch (error) {
-            console.error("Error archiving/unarchiving project:", error);
-        }
-    };
+// Archive a project
+const archiveProject = async (projectId) => {
+    try {
+        const response = await axios.patch(`${PROJECTS_URL}/${projectId}/archive`);
+        setProjects((prev) =>
+            prev.map((project) =>
+                project.id === projectId ? { ...project, status: response.data.message.split(" ").pop() } : project
+            )
+        );
+    } catch (error) {
+        console.error("Error archiving/unarchiving project:", error);
+    }
+};
+
 
     // Add an expense
     const addExpense = async (newExpense) => {
@@ -358,18 +112,24 @@ export const ProjectProvider = ({ children }) => {
             console.error("Error editing expense:", error);
         }
     };
+    
+// Archive an expense
+const archiveExpense = async (expenseId) => {
+    try {
+        const expense = expenses.find((e) => e.id === expenseId);
+        if (!expense) throw new Error("Expense not found");
 
-    // Archive an expense
-    const archiveExpense = async (expenseId) => {
-        try {
-            const response = await axios.patch(`${EXPENSES_URL}/${expenseId}/archive`);
-            setExpenses((prev) =>
-                prev.map((e) => (e.id === expenseId ? { ...e, archived: response.data.archived } : e))
-            );
-        } catch (error) {
-            console.error("Error archiving/unarchiving expense:", error);
-        }
-    };
+        // Call the backend to toggle archive state
+        const response = await axios.patch(`${EXPENSES_URL}/${expenseId}/archive`);
+
+        // Update the state with the response from the backend
+        setExpenses((prev) =>
+            prev.map((e) => (e.id === expenseId ? { ...e, archived: response.data.archived } : e))
+        );
+    } catch (error) {
+        console.error("Error archiving/unarchiving expense:", error);
+    }
+};
 
     // Delete an expense
     const deleteExpense = async (expenseId) => {
@@ -381,14 +141,50 @@ export const ProjectProvider = ({ children }) => {
         }
     };
 
+    // Add a user
+    const addUser = async (newUser) => {
+        try {
+            const response = await axios.post(USERS_URL, newUser);
+            setUsers((prev) => [...prev, response.data]);
+        } catch (error) {
+            console.error("Error adding user:", error);
+        }
+    };
+
+    // Edit a user
+    const editUser = async (updatedUser) => {
+        try {
+            const response = await axios.patch(
+                `${USERS_URL}/${updatedUser.id}`,
+                updatedUser
+            );
+            setUsers((prev) =>
+                prev.map((user) =>
+                    user.id === response.data.id ? response.data : user
+                )
+            );
+        } catch (error) {
+            console.error("Error editing user:", error);
+        }
+    };
+
+    // Delete a user
+    const deleteUser = async (userId) => {
+        try {
+            await axios.delete(`${USERS_URL}/${userId}`);
+            setUsers((prev) => prev.filter((user) => user.id !== userId));
+        } catch (error) {
+            console.error("Error deleting user:", error);
+        }
+    };
+
+    
     return (
         <ProjectContext.Provider
             value={{
                 projects,
                 expenses,
                 users,
-                isAuthenticated,
-                currentUser,
                 addProject,
                 editProject,
                 deleteProject,
@@ -397,8 +193,9 @@ export const ProjectProvider = ({ children }) => {
                 editExpense,
                 deleteExpense,
                 archiveExpense,
-                handleLoginSuccess,
-                handleSignOut,
+                addUser,
+                editUser,
+                deleteUser,
             }}
         >
             {children}
@@ -407,3 +204,6 @@ export const ProjectProvider = ({ children }) => {
 };
 
 export const useProjects = () => useContext(ProjectContext);
+
+
+

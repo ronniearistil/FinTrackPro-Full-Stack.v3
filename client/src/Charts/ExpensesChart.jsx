@@ -1,8 +1,17 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+
+// Register required elements
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ExpenseChart = () => {
-    const data = {
+    const expenseData = {
         labels: ['Expense A', 'Expense B', 'Expense C'],
         datasets: [
             {
@@ -13,9 +22,20 @@ const ExpenseChart = () => {
         ],
     };
 
-    return <Doughnut data={data} />;
+    return (
+        <div style={{ width: '600px', margin: '20px auto' }}>
+            <h3>Expense Breakdown</h3>
+            <Doughnut data={expenseData} />
+        </div>
+    );
 };
 
 export default ExpenseChart;
+
+
+
+
+
+
 
 

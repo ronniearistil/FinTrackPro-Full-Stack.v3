@@ -112,13 +112,9 @@ class Expense(db.Model):
             "amount": self.amount,
             "project_id": self.project_id,
         }
-class RevokedToken(db.Model):
-    __tablename__ = 'revoked_tokens'
 
-    id = db.Column(db.Integer, primary_key=True)
-    jti = db.Column(db.String(36), nullable=False, unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+
 
 
 
