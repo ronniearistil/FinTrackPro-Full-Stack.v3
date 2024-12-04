@@ -108,6 +108,7 @@ class ProjectResource(Resource):
         projects = Project.query.all()
         return project_schema.dump(projects, many=True), 200
 
+
     def post(self):
         project_schema = ProjectSchema()
         try:

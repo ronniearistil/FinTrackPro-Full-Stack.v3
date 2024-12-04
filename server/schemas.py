@@ -18,7 +18,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
         required=True,
         validate=validate.Length(min=8, error="Password must be at least 8 characters long")
     )
-
+    
     email = fields.Email(required=True, error_messages={"invalid": "Invalid email format"})
 
     @validates("email")

@@ -53,7 +53,7 @@ def create_app(config_name="default"):
 
     return app
 
-# Entry point for the application
+
 if __name__ == "__main__":
     # Create app with the specified environment or default to "default"
     app = create_app(os.getenv("FLASK_ENV", "default"))
