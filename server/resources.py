@@ -99,6 +99,22 @@ class LoginResource(Resource):
             "user": user.to_dict()
         }, 200
 
+# class LoginResource(Resource):
+#     def post(self):
+#         data = request.get_json()
+#         email = data.get("email")
+#         password = data.get("password")
+# 
+#         # Verify user
+#         user = User.query.filter_by(email=email).first()
+#         if not user or not user.check_password(password):
+#             return {"error": "Invalid email or password"}, 401
+# 
+#         # Create token
+#         token = create_access_token(identity=user.id)
+#         
+#         # Ensure token is included in the response
+#         return {"token": token}, 200
 
 # Project Resource
 class ProjectResource(Resource):

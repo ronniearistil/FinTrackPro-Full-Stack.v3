@@ -162,7 +162,6 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        username: '',
     });
     const [loading, setLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
@@ -175,7 +174,6 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
                 setFormData({
                     name: response.data.name || '',
                     email: response.data.email || '',
-                    username: response.data.username || '',
                 });
             } catch (err) {
                 console.error('Error fetching user data:', err);
@@ -193,15 +191,15 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        if (!formData.name || !formData.email || !formData.username) {
+        if (!formData.name || !formData.email) {
             toast.error('Please fill out all required fields.');
             return;
         }
 
         setLoading(true);
         try {
-            const { name, email, username } = formData;
-            await axios.patch(`${API_URL}/users/${userId}`, { name, email, username });
+            const { name, email } = formData;
+            await axios.patch(`${API_URL}/users/${userId}`, { name, email });
             toast.success('Account updated successfully!');
             onAccountUpdate();
         } catch (err) {
@@ -262,15 +260,6 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
                 name="email"
                 type="email"
                 value={formData.email}
-                onChange={handleChange}
-                required
-            />
-            <TextField
-                fullWidth
-                margin="normal"
-                label="Username"
-                name="username"
-                value={formData.username}
                 onChange={handleChange}
                 required
             />
