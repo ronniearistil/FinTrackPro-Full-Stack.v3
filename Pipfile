@@ -12,5 +12,6 @@ flask-bcrypt = "*"
 sqlalchemy = "*"
 marshmallow-sqlalchemy = "*"
 faker = "*"
+flask-jwt-extended = "*"
 
 [dev-packages]

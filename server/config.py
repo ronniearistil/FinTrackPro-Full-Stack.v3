@@ -1,3 +1,29 @@
+# import os
+# 
+# class Config:
+#     SECRET_KEY = os.getenv("SECRET_KEY", "defaultsecretkey")
+#     SQLALCHEMY_DATABASE_URI = os.getenv(
+#         "DATABASE_URL",
+#         f"sqlite:///{os.path.join(os.path.abspath(os.getcwd()), 'instance', 'app.db')}"
+#     )
+#     SQLALCHEMY_TRACK_MODIFICATIONS = False
+#     CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "*")
+#     DEBUG = False
+# 
+# class DevelopmentConfig(Config):
+#     DEBUG = True
+# 
+# class ProductionConfig(Config):
+#     DEBUG = False
+# 
+# config = {
+#     "default": Config,
+#     "development": DevelopmentConfig,
+#     "production": ProductionConfig,
+# }
+
+
+# V2
 import os
 
 class Config:
@@ -9,6 +35,14 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "*")
     DEBUG = False
+
+    # Email configuration
+    MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")
+    MAIL_PORT = int(os.getenv("MAIL_PORT", 587))
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")  # Your email address
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")  # Your email password
+    MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "True").lower() in ["true", "1", "t"]
+    MAIL_USE_SSL = os.getenv("MAIL_USE_SSL", "False").lower() in ["true", "1", "t"]
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -23,5 +57,3 @@ config = {
 }
 
 
-
-# app.config['SECRET_KEY'] = 'c7347efa5707091b77072034a4af6de6d34ce8ca7150a75b'

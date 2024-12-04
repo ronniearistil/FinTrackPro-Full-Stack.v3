@@ -8,3 +8,4 @@ class CurrentUserResource(Resource):
         user_id = get_jwt_identity()
         user = User.query.get_or_404(user_id)
         return {"id": user.id, "name": user.name, "email": user.email}, 200
+

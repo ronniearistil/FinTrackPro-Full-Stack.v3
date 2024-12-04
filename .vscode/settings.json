@@ -1,5 +1,9 @@
 {
     "cSpell.words": [
         "dotenv"
+    ],
+    "python.analysis.extraPaths": [
+        "./Auth_Resources",
+        "./server/Auth_Resources"
     ]
 }

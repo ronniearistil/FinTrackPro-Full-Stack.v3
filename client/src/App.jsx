@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useState } from 'react';
 import { ProjectProvider } from './ProjectContext.jsx';
 import Header from './Components/Layout/Header.jsx';
@@ -198,3 +197,137 @@ const App = () => {
     );
 }
 export default App;
+
+//  V2
+
+// import React, { useEffect, useState } from 'react';
+// import { ProjectProvider } from './ProjectContext.jsx';
+// import { Route, Routes, useNavigate } from 'react-router-dom';
+// import ProtectedRoute from './Components/Layout/ProtectedRoute.jsx';
+// import Header from './Components/Layout/Header.jsx';
+// import NavBar from './Components/Layout/NavBar.jsx';
+// import Footer from './Components/Layout/Footer.jsx';
+// import HomePage from './Components/Layout/HomePage.jsx';
+// import ProjectsContainer from './Components/Projects/ProjectsContainer.jsx';
+// import ExpensesContainer from './Components/Expenses/ExpensesContainer.jsx';
+// import ProjectForm from './Components/Forms/ProjectForm.jsx';
+// import ExpenseForm from './Components/Forms/ExpenseForm.jsx';
+// import SignUpForm from './Components/UserManagement/UserSignUpForm.jsx';
+// import LoginForm from './Components/UserManagement/LoginForm.jsx';
+// import AccountManagement from './Components/UserManagement/AccountManagement.jsx';
+// import AccountRecovery from './Components/UserManagement/AccountRecovery.jsx';
+// import PasswordReset from './Components/UserManagement/PasswordReset.jsx'; // New component for password reset
+// import { CssBaseline, ThemeProvider } from '@mui/material';
+// import theme from './theme.jsx';
+// import axios from 'axios';
+// import { ToastContainer, toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// 
+// const App = () => {
+//     const [isAuthenticated, setIsAuthenticated] = useState(false);
+//     const [currentUser, setCurrentUser] = useState(null);
+//     const navigate = useNavigate();
+// 
+//     // Rehydrate the session on app load
+//     useEffect(() => {
+//         const fetchCurrentUser = async () => {
+//             const token = localStorage.getItem('authToken');
+//             if (!token) {
+//                 setIsAuthenticated(false);
+//                 setCurrentUser(null);
+//                 return;
+//             }
+// 
+//             try {
+//                 const response = await axios.get('http://localhost:5555/current-user', {
+//                     headers: {
+//                         Authorization: `Bearer ${token}`,
+//                     },
+//                 });
+//                 setIsAuthenticated(true);
+//                 setCurrentUser(response.data);
+//             } catch (err) {
+//                 console.error('Error fetching current user:', err);
+//                 setIsAuthenticated(false);
+//                 setCurrentUser(null);
+//                 localStorage.removeItem('authToken');
+//             }
+//         };
+// 
+//         fetchCurrentUser();
+//     }, []);
+// 
+//     const handleLoginSuccess = (response) => {
+//         const token = response.data.token;
+//         localStorage.setItem('authToken', token);
+//         setIsAuthenticated(true);
+//         setCurrentUser(response.data.user);
+//         toast.success(`Welcome back, ${response.data.user.name}!`);
+//         navigate('/projects');
+//     };
+// 
+//     const handleSignOut = () => {
+//         setIsAuthenticated(false);
+//         setCurrentUser(null);
+//         localStorage.removeItem('authToken');
+//         toast.success('You have been signed out.');
+//         navigate('/');
+//     };
+// 
+//     return (
+//         <ThemeProvider theme={theme}>
+//             <CssBaseline />
+//             <ProjectProvider>
+//                 <div className="App">
+//                     <ToastContainer position="top-right" autoClose={3000} />
+//                     <Header />
+//                     <NavBar
+//                         isAuthenticated={isAuthenticated}
+//                         onSignOut={handleSignOut}
+//                         onLogin={() => navigate('/login')}
+//                         onSignUp={() => navigate('/signup')}
+//                         currentUser={currentUser}
+//                     />
+//                     <Routes>
+//                         <Route path="/" element={<HomePage />} />
+//                         <Route path="/login" element={<LoginForm onLoginSuccess={handleLoginSuccess} />} />
+//                         <Route path="/signup" element={<SignUpForm />} />
+//                         <Route path="/account/recovery" element={<AccountRecovery />} />
+//                         <Route path="/account/reset-password/:token" element={<PasswordReset />} />
+//                         <Route
+//                             path="/projects"
+//                             element={
+//                                 <ProtectedRoute>
+//                                     <ProjectsContainer />
+//                                 </ProtectedRoute>
+//                             }
+//                         />
+//                         <Route
+//                             path="/expenses"
+//                             element={
+//                                 <ProtectedRoute>
+//                                     <ExpensesContainer />
+//                                 </ProtectedRoute>
+//                             }
+//                         />
+//                         <Route
+//                             path="/account"
+//                             element={
+//                                 <ProtectedRoute>
+//                                     <AccountManagement
+//                                         userId={currentUser?.id}
+//                                         onAccountUpdate={() => toast.success('Account updated successfully!')}
+//                                     />
+//                                 </ProtectedRoute>
+//                             }
+//                         />
+//                         <Route path="*" element={<h2>Page Not Found</h2>} />
+//                     </Routes>
+//                     <Footer />
+//                 </div>
+//             </ProjectProvider>
+//         </ThemeProvider>
+//     );
+// };
+// 
+// export default App;

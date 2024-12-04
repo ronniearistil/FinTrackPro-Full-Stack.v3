@@ -1,3 +1,4 @@
+from flask_jwt_extended import create_access_token
 from flask_restful import Resource
 from flask import request
 from marshmallow import ValidationError
@@ -97,6 +98,7 @@ class LoginResource(Resource):
             "message": "Login successful",
             "user": user.to_dict()
         }, 200
+
 
 # Project Resource
 class ProjectResource(Resource):
