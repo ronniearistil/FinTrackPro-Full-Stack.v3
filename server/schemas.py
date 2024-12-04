@@ -56,9 +56,3 @@ class ExpenseSchema(ma.SQLAlchemyAutoSchema):
     name = fields.String(required=False, validate=validate.Length(min=1))
     amount = fields.Float(required=False, validate=validate.Range(min=0))
     project_id = fields.Integer(required=False, validate=validate.Range(min=1))
-
-
-# class RevokedTokenSchema(SQLAlchemyAutoSchema):
-#     class Meta:
-#         model = RevokedToken
-#         load_instance = True

@@ -68,12 +68,12 @@ import os
 # Add the directory containing app.py to the Python module search path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 from sqlalchemy.sql import text
 from flask_mail import Mail, Message
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, create_access_token
 
 # Load environment variables
 load_dotenv()
@@ -130,13 +130,15 @@ def create_app(config_name="default"):
             return {"error": "Database connection failed", "details": str(e)}, 500
 
     # Test email route
-    @app.route("/test-email", methods=["GET"])
+    @app.route("/test-email", methods=["POST"])
     def test_email():
         try:
+            data = request.get_json()
+            recipient_email = data.get("email", "your_test_email@gmail.com")  # Replace with test email
             msg = Message(
                 subject="Test Email",
                 sender=app.config["MAIL_USERNAME"],
-                recipients=["your_test_email@gmail.com"],  # Replace with a test email address
+                recipients=[recipient_email],
                 body="This is a test email from Flask-Mail."
             )
             mail.send(msg)
@@ -147,11 +149,13 @@ def create_app(config_name="default"):
     # Test JWT route
     @app.route("/generate-token", methods=["POST"])
     def generate_token():
-        from flask import request
-        data = request.get_json()
-        user_id = data.get("user_id", 1)  # Replace with actual user ID logic
-        token = jwt.create_access_token(identity=user_id)
-        return {"token": token}, 200
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id", 1)  # Replace with actual user ID logic
+            token = create_access_token(identity=user_id)
+            return {"token": token}, 200
+        except Exception as e:
+            return {"error": "Failed to generate token", "details": str(e)}, 500
 
     # Import and register routes
     from routes import register_routes
@@ -163,4 +167,4 @@ def create_app(config_name="default"):
 if __name__ == "__main__":
     # Create app with the specified environment or default to "default"
     app = create_app(os.getenv("FLASK_ENV", "default"))
-    app.run(debug=app.config["DEBUG"], port=5555)
+    app.run(debug=app.config["DEBUG"], port=int(os.getenv("PORT", 5555)))

@@ -79,26 +79,6 @@ class UserResource(Resource):
             db.session.rollback()
             return {"error": "Failed to update user", "details": str(e)}, 500
 
-
-# # Login Resource
-# class LoginResource(Resource):
-#     def post(self):
-#         data = request.get_json()
-#         email = data.get("email")
-#         password = data.get("password")
-# 
-#         if not email or not password:
-#             return {"error": "Email and password are required."}, 400
-# 
-#         user = User.query.filter_by(email=email).first()
-#         if not user or not user.check_password(password):
-#             return {"error": "Invalid email or password."}, 401
-# 
-#         return {
-#             "message": "Login successful",
-#             "user": user.to_dict()
-#         }, 200
-
 class LoginResource(Resource):
     def post(self):
         data = request.get_json()

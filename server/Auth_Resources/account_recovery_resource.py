@@ -94,7 +94,7 @@ class AccountRecoveryResource(Resource):
             return {"error": "User not found"}, 404
 
         # Update the password
-        user.set_password(new_password)  # Assuming a set_password method exists
+        user.set_password(new_password)  
         db.session.commit()
 
         return {"message": "Password has been reset successfully"}, 200

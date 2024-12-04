@@ -1,8 +1,11 @@
+
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
@@ -12,23 +15,35 @@ const LoginForm = ({ onLoginSuccess }) => {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    // Handle form field changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    // Toggle password visibility
     const toggleShowPassword = () => setShowPassword(!showPassword);
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:5555/login', {
+            const response = await axios.post(`${API_URL}/login`, {
                 email: formData.email,
                 password: formData.password,
             });
-            toast.success('Login successful!');
-            onLoginSuccess(response.data); // Call the parent callback with login details
+
+            const { token, user } = response.data;
+
+            // Save the token in localStorage for authenticated requests
+            localStorage.setItem('authToken', token);
+
+            // Notify success and greet the user by name
+            // toast.success(`Welcome, ${user.name}!`);
+
+            // Pass the token and user details to the parent component
+            onLoginSuccess({ token, user });
         } catch (err) {
             console.error('Error logging in:', err);
             const errorMessage =
