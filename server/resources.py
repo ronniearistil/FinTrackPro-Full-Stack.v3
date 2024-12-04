@@ -80,41 +80,48 @@ class UserResource(Resource):
             return {"error": "Failed to update user", "details": str(e)}, 500
 
 
-# Login Resource
-class LoginResource(Resource):
-    def post(self):
-        data = request.get_json()
-        email = data.get("email")
-        password = data.get("password")
-
-        if not email or not password:
-            return {"error": "Email and password are required."}, 400
-
-        user = User.query.filter_by(email=email).first()
-        if not user or not user.check_password(password):
-            return {"error": "Invalid email or password."}, 401
-
-        return {
-            "message": "Login successful",
-            "user": user.to_dict()
-        }, 200
-
+# # Login Resource
 # class LoginResource(Resource):
 #     def post(self):
 #         data = request.get_json()
 #         email = data.get("email")
 #         password = data.get("password")
 # 
-#         # Verify user
+#         if not email or not password:
+#             return {"error": "Email and password are required."}, 400
+# 
 #         user = User.query.filter_by(email=email).first()
 #         if not user or not user.check_password(password):
-#             return {"error": "Invalid email or password"}, 401
+#             return {"error": "Invalid email or password."}, 401
 # 
-#         # Create token
-#         token = create_access_token(identity=user.id)
-#         
-#         # Ensure token is included in the response
-#         return {"token": token}, 200
+#         return {
+#             "message": "Login successful",
+#             "user": user.to_dict()
+#         }, 200
+
+class LoginResource(Resource):
+    def post(self):
+        data = request.get_json()
+        email = data.get("email")
+        password = data.get("password")
+
+        # Verify user
+        user = User.query.filter_by(email=email).first()
+        if not user or not user.check_password(password):
+            return {"error": "Invalid email or password"}, 401
+
+        # Create token
+        token = create_access_token(identity=user.id)
+
+        # Include user details in the response
+        return {
+            "token": token,
+            "user": {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email
+            }
+        }, 200
 
 # Project Resource
 class ProjectResource(Resource):
