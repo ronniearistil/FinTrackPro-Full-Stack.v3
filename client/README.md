@@ -25,7 +25,7 @@ In the **client** directory, you can run:
 ### `npm start`
 
 Runs the React application in the development mode.  
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
 
 The page will reload when you make changes.  
 You may also see any lint errors in the console.
@@ -122,7 +122,7 @@ pip install -r requirements.txt
     `npm install`
     `npm start`
 
-4. Access the app in your browser at [http://localhost:3000]
+4. Access the app in your browser at [http://localhost:3001]
 
 # Features
 ## MVP Features

@@ -5,7 +5,7 @@ import NavBar from './Components/Layout/NavBar.jsx';
 import ProjectsContainer from './Components/Projects/ProjectsContainer.jsx';
 import ExpensesContainer from './Components/Expenses/ExpensesContainer.jsx';
 import Footer from './Components/Layout/Footer.jsx';
-import AboutUs from './Components/UserManagement/AboutUs.jsx';
+import AboutUs from './Components/Layout/AboutUs.jsx';
 import HomePage from './Components/Layout/HomePage.jsx';
 import ProjectForm from './Components/Forms/ProjectForm.jsx';
 import ExpenseForm from './Components/Forms/ExpenseForm.jsx';
@@ -79,10 +79,10 @@ const App = () => {
     };
 
     // Handle Login Success
-    const handleLoginSuccess = ({ token, user }) => {
+    const handleLoginSuccess = ({ user }) => {
         setIsAuthenticated(true);
         setCurrentUser(user);
-        localStorage.setItem('authToken', token); // Store token for persistence
+        // localStorage.setItem('authToken', token); // Store token for persistence
         showToast(`Welcome back, ${user.name || 'User'}!`);
         navigate('/projects');
     };
@@ -90,10 +90,19 @@ const App = () => {
     // Handle Sign Out
     const handleSignOut = () => {
         setIsAuthenticated(false);
-        setCurrentUser(null);
-        localStorage.removeItem('authToken'); // Clear token on logout
-        showToast('You have been signed out.');
-        navigate('/');
+        fetch("http://localhost:5555/logout",{
+            method: "Delete",
+            headers:{credentials: "include"}
+        })
+        .then(res=>{
+        if (res.ok){
+            setCurrentUser(null);
+            // localStorage.removeItem('authToken'); 
+            showToast('You have been signed out.');
+            navigate('/');
+
+        }
+        })
     };
 
     // Render Loading and Error States
@@ -203,7 +212,7 @@ export default App;
 // import ProjectsContainer from './Components/Projects/ProjectsContainer.jsx';
 // import ExpensesContainer from './Components/Expenses/ExpensesContainer.jsx';
 // import Footer from './Components/Layout/Footer.jsx';
-// import AboutUs from './Components/UserManagement/AboutUs.jsx';
+// import AboutUs from './Components/Layout/AboutUs.jsx';
 // import HomePage from './Components/Layout/HomePage.jsx';
 // import ProjectForm from './Components/Forms/ProjectForm.jsx';
 // import ExpenseForm from './Components/Forms/ExpenseForm.jsx';
@@ -238,20 +247,27 @@ export default App;
 //         toast[type](message);
 //     };
 // 
-//     // Check for token on app load
+//     // Check for token and restore auth state on app load
 //     useEffect(() => {
 //         const checkAuth = async () => {
 //             const token = localStorage.getItem('authToken');
+//             const storedUser = localStorage.getItem('currentUser');
 //             if (token) {
 //                 try {
 //                     const response = await axios.get('http://localhost:5555/auth/validate-token', {
 //                         headers: { Authorization: `Bearer ${token}` },
 //                     });
-//                     setCurrentUser(response.data.user);
+// 
+//                     // Restore auth state
+//                     setCurrentUser(response.data.user || JSON.parse(storedUser));
 //                     setIsAuthenticated(true);
 //                 } catch (err) {
+//                     if (err.response?.status === 401) {
+//                         showToast('Your session has expired. Please log in again.', 'warning');
+//                     }
 //                     console.error('Token validation failed:', err);
 //                     localStorage.removeItem('authToken');
+//                     localStorage.removeItem('currentUser');
 //                     setIsAuthenticated(false);
 //                 }
 //             }
@@ -261,33 +277,42 @@ export default App;
 //         checkAuth();
 //     }, []);
 // 
+//     // Handle Search
 //     const handleSearch = (term) => setSearchTerm(term);
 //     const handleStatusFilter = (status) => setStatusFilter(status);
 //     const handleSort = (option) => setSortOption(option);
 // 
+//     // Handle Signup Success
 //     const handleSignUpSuccess = (user) => {
 //         setIsAuthenticated(true);
 //         setCurrentUser(user);
+//         localStorage.setItem('authToken', user.token); 
+//         localStorage.setItem('currentUser', JSON.stringify(user)); 
 //         showToast(`Welcome, ${user.name || 'User'}!`);
 //         navigate('/projects');
 //     };
 // 
+//     // Handle Login Success
 //     const handleLoginSuccess = ({ token, user }) => {
 //         setIsAuthenticated(true);
 //         setCurrentUser(user);
 //         localStorage.setItem('authToken', token); // Store token for persistence
+//         localStorage.setItem('currentUser', JSON.stringify(user)); // Store user data
 //         showToast(`Welcome back, ${user.name || 'User'}!`);
 //         navigate('/projects');
 //     };
 // 
+//     // Handle Sign Out
 //     const handleSignOut = () => {
 //         setIsAuthenticated(false);
 //         setCurrentUser(null);
-//         localStorage.removeItem('authToken'); // Clear token on logout
+//         localStorage.removeItem('authToken'); // Clear token
+//         localStorage.removeItem('currentUser'); // Clear user data
 //         showToast('You have been signed out.');
 //         navigate('/');
 //     };
 // 
+//     // Render Loading and Error States
 //     if (loading) return <p>Loading...</p>;
 //     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 // 

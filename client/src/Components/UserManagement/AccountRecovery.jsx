@@ -12,7 +12,6 @@ const AccountRecovery = () => {
     const [tokenValid, setTokenValid] = useState(false);
     const [loading, setLoading] = useState(false);
     const [searchParams] = useSearchParams();
-
     const token = searchParams.get('token');
 
     useEffect(() => {
@@ -121,8 +120,8 @@ const AccountRecovery = () => {
 export default AccountRecovery;
 
 
-// V2 Update 12/4 @4:26pm
-
+// // V2 Update 12/4 @4:26pm
+// 
 // import React, { useState } from 'react';
 // import { useSearchParams } from 'react-router-dom';
 // import { TextField, Button, Box, Typography } from '@mui/material';

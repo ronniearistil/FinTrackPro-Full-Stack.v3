@@ -1,6 +1,6 @@
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, set_access_cookies
 from flask_restful import Resource
-from flask import request
+from flask import request, make_response
 from marshmallow import ValidationError
 from models import User, Project, Expense
 from schemas import UserSchema, ProjectSchema, ExpenseSchema
@@ -89,19 +89,21 @@ class LoginResource(Resource):
         user = User.query.filter_by(email=email).first()
         if not user or not user.check_password(password):
             return {"error": "Invalid email or password"}, 401
-
+        user_schema = UserSchema()
+        response = make_response(user_schema.dump(user),200)
         # Create token
-        token = create_access_token(identity=user.id)
-
+        token = create_access_token(identity= str(user.id))
+        set_access_cookies(response, token)
         # Include user details in the response
-        return {
-            "token": token,
-            "user": {
-                "id": user.id,
-                "name": user.name,
-                "email": user.email
-            }
-        }, 200
+        return response
+    # {
+    #         "token": token,
+    #         "user": {
+    #             "id": user.id,
+    #             "name": user.name,
+    #             "email": user.email
+    #         }
+    #     }, 200
 
 # Project Resource
 class ProjectResource(Resource):
