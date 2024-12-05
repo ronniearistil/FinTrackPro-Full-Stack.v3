@@ -88,23 +88,60 @@ const App = () => {
     };
 
     // Handle Sign Out
+    //     const handleSignOut = () => {
+    //         setIsAuthenticated(false);
+    //         fetch("http://localhost:5555/logout",{
+    //             method: "Delete",
+    //             headers:{credentials: "include"}
+    //         })
+    //         .then(res=>{
+    //         if (res.ok){
+    //             setCurrentUser(null);
+    //             // localStorage.removeItem('authToken'); 
+    //             showToast('You have been signed out.');
+    //             navigate('/');
+    // 
+    //         }
+    //         })
+    //     };
     const handleSignOut = () => {
-        setIsAuthenticated(false);
-        fetch("http://localhost:5555/logout",{
-            method: "Delete",
-            headers:{credentials: "include"}
+        fetch("http://localhost:5555/logout", {
+            method: "DELETE",
+            credentials: "include", // Ensures cookies are sent with the request
         })
-        .then(res=>{
-        if (res.ok){
+        .then(async (res) => {
             setCurrentUser(null);
-            // localStorage.removeItem('authToken'); 
-            showToast('You have been signed out.');
-            navigate('/');
-
-        }
+            setIsAuthenticated(false);
+    
+            if (res.ok) {
+                showToast("You have been signed out successfully.");
+                navigate("/");
+            } else {
+                const errorData = await res.json();
+                console.warn("Logout error:", errorData);
+                if (res.status === 401) {
+                    showToast("Your session had already expired.");
+                    navigate("/");
+                } else {
+                    showToast(
+                        errorData.error || "An error occurred while signing out.",
+                        "error"
+                    );
+                }
+            }
         })
+        .catch((err) => {
+            console.error("Network error:", err);
+            setCurrentUser(null);
+            setIsAuthenticated(false);
+            showToast(
+                "Unable to connect to the server. You have been signed out.",
+                "info"
+            );
+            navigate("/");
+        });
     };
-
+    
     // Render Loading and Error States
     if (loading) return <p>Loading...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;

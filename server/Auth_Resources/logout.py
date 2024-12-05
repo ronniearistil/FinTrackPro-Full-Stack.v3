@@ -1,31 +1,34 @@
+# from flask import make_response
+# from flask_restful import Resource
+# from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity, unset_access_cookies
+# from extensions import db
+# class LogoutResource(Resource):
+#     @jwt_required()
+#     def delete(self):
+#         try:
+#             import ipdb; ipdb.set_trace()
+#             response = make_response("", 204)
+#             unset_access_cookies(response)
+#             return response
+# 
+#         except Exception as e:
+#             return {"error": "An error occurred during logout", "details": str(e)}, 500
+
 from flask import make_response
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity, unset_access_cookies
-from extensions import db
-# from models import RevokedToken
-
+from flask_jwt_extended import jwt_required, unset_access_cookies, unset_refresh_cookies
+import logging
 
 class LogoutResource(Resource):
-    @jwt_required()
+    @jwt_required(optional=True)  # Allows the route to handle missing or expired tokens
     def delete(self):
         try:
-            import ipdb; ipdb.set_trace()
-            #             jti = get_jwt()["jti"]  # JWT ID
-            #             user_id = get_jwt_identity()
-            #
-            #             # Check if the token is already revoked
-            #             if RevokedToken.query.filter_by(jti=jti).first():
-            #                 return {"error": "User is already logged out"}, 400
-            #
-            #             # Add the jti to the RevokedToken table
-            #             revoked_token = RevokedToken(jti=jti, user_id=user_id)
-            #             db.session.add(revoked_token)
-            #             db.session.commit()
-            #
-            #             return {"message": "Successfully logged out"}, 200
-            response = make_response("", 204)
+            # Clear cookies for access and refresh tokens
+            response = make_response({"message": "Successfully logged out"}, 200)
             unset_access_cookies(response)
+            unset_refresh_cookies(response)
             return response
-
         except Exception as e:
+            logging.error(f"Logout failed: {e}")
             return {"error": "An error occurred during logout", "details": str(e)}, 500
+
