@@ -105,9 +105,6 @@
 #     app = create_app(os.getenv("FLASK_ENV", "default"))
 #     app.run(debug=app.config["DEBUG"], port=int(os.getenv("PORT", 5555)))
 
-
-# 
-
 import os
 import sys
 from flask import Flask, request, jsonify
@@ -205,6 +202,12 @@ def create_app(config_name="default"):
     # Import and register routes
     from routes import register_routes
     register_routes(app)
+
+    # Debugging: Print all registered routes
+    with app.app_context():
+        print("Registered routes:")
+        for rule in app.url_map.iter_rules():
+            print(f"{rule.endpoint}: {rule.rule}")
 
     return app
 

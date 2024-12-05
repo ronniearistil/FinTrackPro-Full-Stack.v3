@@ -11,8 +11,9 @@ from resources import (
     ExpenseArchiveResource,
 )
 from collaboration_resources import CollaboratorsResource
-from Auth_Resources.account_recovery_resource import AccountRecoveryResource  # Correct path
-from Auth_Resources.current_user import CurrentUserResource  # Correct path
+from Auth_Resources.account_recovery_resource import AccountRecoveryResource  
+from Auth_Resources.current_user import CurrentUserResource  
+from Auth_Resources.validate_token import ValidateTokenResource
 
 
 def register_routes(app):
@@ -23,6 +24,7 @@ def register_routes(app):
     api.add_resource(LoginResource, '/login')
     api.add_resource(AccountRecoveryResource, '/account/recovery')  # Password recovery route
     api.add_resource(CurrentUserResource, '/current-user')  # Current user route
+    api.add_resource(ValidateTokenResource, '/auth/validate-token')
 
     # Project-related routes
     api.add_resource(ProjectResource, '/projects', '/projects/<int:project_id>')
