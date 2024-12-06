@@ -46,7 +46,6 @@ FinTrackPro is a full-stack application designed to help businesses and individu
 - **Flask-CORS**: Enables cross-origin communication between frontend and backend.
 - **Flask-Mail**: Configures and sends email notifications.
 - **Flask-RESTful**: Simplifies API route definitions and management.
-- **Flask-Session**: Provides server-side session handling.
 
 ### Database
 - **SQLite**: Lightweight, file-based relational database.
