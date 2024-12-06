@@ -1,150 +1,177 @@
-# Getting Started with Create React App
-
 # FinTrackPro
-
-This project is a full-stack financial management and project tracking application. It enables users to manage projects, track expenses, and analyze financial performance in real time.
-
-# Getting Started
-- Clone the repository and follow the instructions to set up the backend and frontend for development.
-`git clone https://github.com/FinTrackPro.git`
-
-# Backend Setup
-- Navigate to the server directory and install the dependencies:
-`cd server`
-`pip install -r requirements.txt`
-
-## Available Scripts
-
-In the **server** directory, you can run:
-
-### `flask run`
-
-Runs the backend server in development mode.  
-The server will start on [http://127.0.0.1:5555](http://127.0.0.1:5555).
-
-The server handles the database and API endpoints for users, projects, and expenses. See the [API Documentation](#api-documentation) for more details.
-
-### `python seed.py`
-
-Seeds the database with sample data for testing purposes.  
-Ensure your database is properly configured before running this script.
-
-In the **client** directory, you can run:
-
-### `npm start`
-
-Runs the React application in the development mode.  
-Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
-
-The page will reload when you make changes.  
-You may also see any lint errors in the console.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.  
-It bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified, and the filenames include hashes.  
-Your app is ready to be deployed!
+**Phase 4 Project – Flatiron School – Cohort 09/16/2024**
 
 ---
 
-## API Documentation
-
-### Users
-- `GET /users`: Retrieve all users.
-- `POST /users`: Add a new user.
-- `PATCH /users/:id`: Update a user's information.
-- `DELETE /users/:id`: Delete a user.
-
-### Projects
-- `GET /projects`: Retrieve all projects.
-- `POST /projects`: Add a new project.
-- `PATCH /projects/:id`: Update project details.
-- `DELETE /projects/:id`: Delete a project.
-
-### Expenses
-- `GET /expenses`: Retrieve all expenses.
-- `POST /expenses`: Add a new expense.
-- `PATCH /expenses/:id`: Update expense details.
-- `DELETE /expenses/:id`: Delete an expense.
-
-### Authentication
-- `POST /signup`: Register a new user.
-- `POST /login`: Authenticate user and create a session.
-- `POST /logout`: Log out the current user.
+## Overview
+FinTrackPro is a full-stack application designed to help businesses and individuals forecast expenses, manage project budgets, and analyze profitability in real time. Built with a dynamic React frontend and a robust Flask backend, it streamlines financial management and project tracking to empower users to make data-driven decisions.
 
 ---
 
-## React Router/Routes
+## Features
+### Core Functionality
+- **CRUD Actions**: Create, read, update, and delete operations for both projects and expenses.
+- **Archiving**: Archive/unarchive projects and expenses for improved data organization.
+- **User Authentication**: Secure signup, login, logout, and session management using JWT.
+- **Data Validations**: 
+  - Projects and expenses validated for specific formats and rules.
+  - Prevent invalid data submissions with both client- and server-side validation.
+- **Real-Time Tracking**: Monitor budgeted and actual costs for projects.
 
-### Main Routes
-- `/login`: Renders the login form for user authentication.
-- `/signup`: Renders the signup form for user registration.
-- `/projects`: Displays the list of all projects.
-- `/expenses`: Displays the list of all expenses.
-- `/about`: Displays information about FinTrackPro.
+### User Stories
+- Add, update, and delete projects and associated expenses.
+- View all projects and expenses with dynamic dashboards.
+- Archive completed projects or outdated expenses for better focus.
+- Collaborate on projects with role-based access for multiple users.
 
-### Protected Routes
-Routes like `/projects` and `/expenses` are only accessible to logged-in users. Unauthenticated users will be redirected to `/login`.
+### Stretch Goals
+- Forecast financial metrics using advanced analytics.
+- Visualize financial data with dynamic charts and profitability metrics.
 
 ---
 
-## Database Structure
+## Technologies Used
 
-### Tables
-#### Users
-- `id`: Primary key.
-- `name`: User's name.
-- `email`: User's email address.
-- `password_hash`: Encrypted password for authentication.
+### Frontend
+- **React**: Dynamic rendering and state management.
+- **React Router**: Client-side routing for navigation.
+- **Formik & Yup**: Forms and input validation.
+- **Toast Notifications**: User-friendly feedback for success and error states.
 
-#### Projects
-- `id`: Primary key.
-- `name`: Project name.
-- `budgeted_cost`: Project's budgeted cost.
-- `actual_cost`: Project's actual cost.
-- `status`: Status of the project (e.g., "In Progress", "Completed").
-- `user_id`: Foreign key linking to the user who owns the project.
+### Backend
+- **Flask**: RESTful API framework for building the backend.
+- **Flask-SQLAlchemy**: ORM for database management.
+- **Flask-Migrate**: Handles database schema migrations using Alembic.
+- **Flask-JWT-Extended**: Provides secure user authentication with JWT.
+- **Flask-CORS**: Enables cross-origin communication between frontend and backend.
+- **Flask-Mail**: Configures and sends email notifications.
+- **Flask-RESTful**: Simplifies API route definitions and management.
+- **Flask-Session**: Provides server-side session handling.
 
-#### Expenses
-- `id`: Primary key.
-- `name`: Expense name.
-- `amount`: Amount spent on the expense.
-- `project_id`: Foreign key linking the expense to its associated project.
+### Database
+- **SQLite**: Lightweight, file-based relational database.
+
+### Libraries and Tools
+- **Marshmallow**: Object serialization and deserialization.
+- **Marshmallow-SQLAlchemy**: Integration of Marshmallow with SQLAlchemy models.
+- **bcrypt**: Secure hashing for storing passwords.
+- **Python-Dotenv**: Load environment variables from `.env` files.
+- **Faker**: Generate mock data for testing and database seeding.
+- **PyJWT**: JSON Web Token library for additional JWT functionality.
+
+### Development Tools
+- **ipython**: Enhanced interactive Python shell.
+- **ipdb**: Interactive debugger for Python.
+- **Werkzeug**: Comprehensive WSGI web application library.
+- **Alembic**: Database migrations management.
+- **Jinja2**: Templating engine used by Flask.
+
+---
+
+## Models and Relationships
+
+### User
+- **Attributes**: id, name, email, password_hash, role, is_active, created_at, updated_at
+- **Relationships**: 
+  - Many-to-Many with projects through the `user_projects` association table.
+  - Can collaborate on multiple projects.
+
+### Project
+- **Attributes**: id, name, budgeted_cost, actual_cost, status, progress_percentage, category, start_date, end_date, user_id
+- **Relationships**:
+  - Belongs to a user.
+  - Many-to-Many with collaborators (users).
+  - One-to-Many with expenses.
+
+### Expense
+- **Attributes**: id, name, amount, project_id
+- **Relationships**:
+  - Belongs to a project.
+
+---
+
+## Application Pages
+
+### Home Page
+- **Path**: `/`
+- **Description**: Welcome page introducing the app.
+
+### Dashboard
+- **Path**: `/projects`
+- **Description**: Displays all user projects with budgeted vs. actual costs.
+
+### Expense Dashboard
+- **Path**: `/expenses`
+- **Description**: Lists all expenses, grouped by project.
+
+### Authentication Pages
+- **Sign Up**: `/signup`
+- **Login**: `/login`
+
+### Project Pages
+- **Add Project**: `/projects/new`
+- **Edit Project**: `/projects/:id/edit`
+
+### Expense Pages
+- **Add Expense**: `/expenses/new`
+- **Edit Expense**: `/expenses/:id/edit`
 
 ---
 
 ## Setup Instructions
 
-1. Clone the repository:  
+### Backend Setup
+1. Navigate to the `server` directory.
+2. Install dependencies:
    ```bash
-   git clone https://github.com/yourusername/FinTrackPro.git
+   pipenv install
+   pipenv shell
+3. Run the Flask server:
+   `flask run`
+4. Initialize the database:
+`flask db init`
+`flask db migrate -m "Initial migration"`
+`flask db upgrade`
+5. (Optional) Seed the database with mock data
+  `python seed.py`
 
-2. Set up the backend:
-    `cd server`
-pip install -r requirements.txt
-    `flask run`
+### Frontend Setup
+1. Navigate to the client directory.
+2. Install dependencies:
+`npm install`
+3. Start the React application:
+   `npm start`
 
-3. Set up the frontend:
-    `cd client`
-    `npm install`
-    `npm start`
+## API Documentation
+ - **Users**
+      GET /users: Retrieve all users.
+      POST /users: Add a new user.
+      PATCH /users/<id>: Update a user's information.
+      DELETE /users/<id>: Delete a user.
+- **Projects**
+      GET /projects: Retrieve all projects.
+      POST /projects: Add a new project.
+      PATCH /projects/<id>: Update project details.
+      DELETE /projects/<id>: Delete a project.
+- **Expenses**
+     GET /expenses: Retrieve all expenses.
+     POST /expenses: Add a new expense.
+     PATCH /expenses/<id>: Update expense details.
+     DELETE /expenses/<id>: Delete an expense.
+  
+  # Future Enhancements
+- Analytics: Add advanced financial forecasting and profitability metrics.
+- Collaboration: Introduce real-time collaboration features with role-based access.
+- Charts: Implement dynamic charts for visualizing financial data.
 
-4. Access the app in your browser at [http://localhost:3001]
+# Acknowledgements
+- Special thanks to Flatiron School instructors and peers for their guidance and support throughout this project.
 
-# Features
-- Secure user authentication and session management.
-- Add, edit, delete/Archive, and view projects and expenses.
-- Dynamic dashboards for visualizing project budgets and expenses.
-- Stretch Goals
-- Financial forecasting using libraries like NumPy.
-- Multi-user collaboration with role-based access.
-- Advanced analytics and profitability metrics.
 
-# Deployment
-To deploy the app, ensure both the backend and frontend are built and configured for production.
-For backend deployment, use a WSGI server like Gunicorn.
-For frontend deployment, serve the build folder using a static site hosting service like Netlify or Vercel.
+
+
+
+
+
 
 
