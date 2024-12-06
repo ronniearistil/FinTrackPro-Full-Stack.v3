@@ -4,6 +4,15 @@
 
 This project is a full-stack financial management and project tracking application. It enables users to manage projects, track expenses, and analyze financial performance in real time.
 
+# Getting Started
+- Clone the repository and follow the instructions to set up the backend and frontend for development.
+`git clone https://github.com/FinTrackPro.git`
+
+# Backend Setup
+- Navigate to the server directory and install the dependencies:
+`cd server`
+`pip install -r requirements.txt`
+
 ## Available Scripts
 
 In the **server** directory, you can run:
@@ -125,9 +134,8 @@ pip install -r requirements.txt
 4. Access the app in your browser at [http://localhost:3001]
 
 # Features
-## MVP Features
 - Secure user authentication and session management.
-- Add, edit, delete, and view projects and expenses.
+- Add, edit, delete/Archive, and view projects and expenses.
 - Dynamic dashboards for visualizing project budgets and expenses.
 - Stretch Goals
 - Financial forecasting using libraries like NumPy.
@@ -138,3 +146,5 @@ pip install -r requirements.txt
 To deploy the app, ensure both the backend and frontend are built and configured for production.
 For backend deployment, use a WSGI server like Gunicorn.
 For frontend deployment, serve the build folder using a static site hosting service like Netlify or Vercel.
+
+

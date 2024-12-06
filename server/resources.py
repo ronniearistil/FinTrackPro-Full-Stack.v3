@@ -96,16 +96,6 @@ class LoginResource(Resource):
         set_access_cookies(response, token)
         # Include user details in the response
         return response
-    # {
-    #         "token": token,
-    #         "user": {
-    #             "id": user.id,
-    #             "name": user.name,
-    #             "email": user.email
-    #         }
-    #     }, 200
-
-# Project Resource
 class ProjectResource(Resource):
     def get(self, project_id=None):
         project_schema = ProjectSchema()
@@ -171,7 +161,6 @@ from extensions import db
 
 class ProjectArchiveResource(Resource):
     def patch(self, project_id):
-        # Retrieve the project or return a 404 if not found
         project = Project.query.get_or_404(project_id)
 
         # Toggle the status

@@ -35,14 +35,6 @@ const LoginForm = ({ onLoginSuccess }) => {
             });
 
             const user = response.data;
-
-            // Save the token in localStorage for authenticated requests
-            // localStorage.setItem('authToken', token);
-
-            // Notify success and greet the user by name
-            // toast.success(`Welcome, ${user.name}!`);
-
-            // Pass the token and user details to the parent component
             onLoginSuccess({ user });
         } catch (err) {
             console.error('Error logging in:', err);
