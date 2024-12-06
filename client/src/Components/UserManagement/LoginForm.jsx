@@ -5,7 +5,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
 
 const LoginForm = ({ onLoginSuccess }) => {
     const [formData, setFormData] = useState({
@@ -29,7 +29,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post(`${API_URL}/login`, {
+            const response = await axios.post(`/login`, {
                 email: formData.email,
                 password: formData.password,
             });

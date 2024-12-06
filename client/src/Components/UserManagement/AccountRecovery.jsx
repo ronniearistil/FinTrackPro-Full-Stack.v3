@@ -4,7 +4,7 @@ import { TextField, Button, Box, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
 
 const AccountRecovery = () => {
     const [email, setEmail] = useState('');
@@ -24,7 +24,7 @@ const AccountRecovery = () => {
     const handleEmailSubmit = async () => {
         setLoading(true);
         try {
-            await axios.post(`${API_URL}/account/recovery`, { email });
+            await axios.post(`/account/recovery`, { email });
             toast.success('Recovery email sent successfully!');
         } catch (err) {
             toast.error(err.response?.data?.error || 'Failed to send recovery email.');
@@ -40,7 +40,7 @@ const AccountRecovery = () => {
         }
         setLoading(true);
         try {
-            await axios.get(`${API_URL}/account/recovery`, { params: { token } });
+            await axios.get(`/account/recovery`, { params: { token } });
             toast.success('Token is valid. Please set a new password.');
             setTokenValid(true);
         } catch (err) {
@@ -58,7 +58,7 @@ const AccountRecovery = () => {
 
         setLoading(true);
         try {
-            await axios.put(`${API_URL}/account/recovery`, { token, new_password: newPassword });
+            await axios.put(`/account/recovery`, { token, new_password: newPassword });
             toast.success('Password has been reset successfully!');
             setTokenValid(false);
             setNewPassword('');

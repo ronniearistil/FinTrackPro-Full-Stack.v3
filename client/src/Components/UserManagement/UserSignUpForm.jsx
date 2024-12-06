@@ -28,7 +28,7 @@ const SignupForm = ({ onSignUpSuccess }) => {
         onSubmit: async (values, { setSubmitting }) => {
             const { confirmPassword, ...payload } = values; // Exclude confirmPassword
             try {
-                const response = await axios.post('http://localhost:5555/users', payload);
+                const response = await axios.post('/users', payload);
                 toast.success('Signup successful!');
                 onSignUpSuccess(response.data);
             } catch (err) {

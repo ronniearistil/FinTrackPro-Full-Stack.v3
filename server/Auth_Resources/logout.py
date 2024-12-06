@@ -20,11 +20,11 @@ from flask_jwt_extended import jwt_required, unset_access_cookies, unset_refresh
 import logging
 
 class LogoutResource(Resource):
-    @jwt_required(optional=True)  # Allows the route to handle missing or expired tokens
+    @jwt_required(optional=False)  # Allows the route to handle missing or expired tokens
     def delete(self):
         try:
             # Clear cookies for access and refresh tokens
-            response = make_response({"message": "Successfully logged out"}, 200)
+            response = make_response({"message": "Successfully logged out"}, 204)
             unset_access_cookies(response)
             unset_refresh_cookies(response)
             return response

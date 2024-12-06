@@ -26,7 +26,7 @@ const UserSignUpForm = () => {
         }),
         onSubmit: async (values, { resetForm }) => {
             try {
-                await axios.post('http://localhost:5555/users', values);
+                await axios.post('/users', values);
                 toast.success('User signed up successfully!');
                 resetForm();
             } catch (error) {

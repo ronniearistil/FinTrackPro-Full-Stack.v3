@@ -21,6 +21,11 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+export const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
 const App = () => {
     const [projects, setProjects] = useState([]);
     const [expenses, setExpenses] = useState([]);
@@ -43,27 +48,57 @@ const App = () => {
     // Check for token and restore auth state on app load
     useEffect(() => {
         const checkAuth = async () => {
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                try {
-                    const response = await axios.get('http://localhost:5555/auth/validate-token', {
-                        headers: { Authorization: `Bearer ${token}` },
-                    });
+            // const token = localStorage.getItem('authToken');
+            // if (token) {
+            try {
+                const response = await fetch('/auth/validate-token')
 
-                    // Restore auth state
-                    setCurrentUser(response.data.user);
+                // Restore auth state
+                const data = await response.json()
+                console.log(response,data)
+                if (response.ok) {
+                    setCurrentUser(data.user);
                     setIsAuthenticated(true);
-                } catch (err) {
-                    console.error('Token validation failed:', err);
-                    localStorage.removeItem('authToken');
+                }
+                else {
+                    console.error('Token validation failed:', data.error);
                     setIsAuthenticated(false);
                 }
+            } catch (err) {
+                console.error('Token validation failed:', err);
+                // localStorage.removeItem('authToken');
+                setIsAuthenticated(false);
             }
             setLoading(false);
         };
 
         checkAuth();
     }, []);
+
+    // Check for token and restore auth state on app load
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         try {
+    //             // Send a request to validate the user's session based on cookies
+    //             const response = await axios.get('/auth/validate-token', {
+    //                 withCredentials: true, // Ensure cookies are included in the request
+    //             });
+    // 
+    //             // Restore authentication state if the backend confirms validity
+    //             setCurrentUser(response.data.user);
+    //             setIsAuthenticated(true);
+    //         } catch (err) {
+    //             console.error('Token validation failed or user is not authenticated:', err);
+    //             setCurrentUser(null);
+    //             setIsAuthenticated(false);
+    //         } finally {
+    //             setLoading(false); // Ensure the loading state is reset
+    //         }
+    //     };
+    // 
+    //     checkAuth(); // Call the function on component load
+    // }, []);
+
 
     // Handle Search
     const handleSearch = (term) => setSearchTerm(term);
@@ -90,7 +125,7 @@ const App = () => {
     // Handle Sign Out
     //     const handleSignOut = () => {
     //         setIsAuthenticated(false);
-    //         fetch("http://localhost:5555/logout",{
+    //         fetch("/logout",{
     //             method: "Delete",
     //             headers:{credentials: "include"}
     //         })
@@ -104,44 +139,48 @@ const App = () => {
     //         }
     //         })
     //     };
+
     const handleSignOut = () => {
-        fetch("http://localhost:5555/logout", {
+        fetch("/logout", {
             method: "DELETE",
-            credentials: "include", // Ensures cookies are sent with the request
-        })
-        .then(async (res) => {
-            setCurrentUser(null);
-            setIsAuthenticated(false);
-    
-            if (res.ok) {
-                showToast("You have been signed out successfully.");
-                navigate("/");
-            } else {
-                const errorData = await res.json();
-                console.warn("Logout error:", errorData);
-                if (res.status === 401) {
-                    showToast("Your session had already expired.");
-                    navigate("/");
-                } else {
-                    showToast(
-                        errorData.error || "An error occurred while signing out.",
-                        "error"
-                    );
-                }
+            headers:{
+                'X-CSRF-TOKEN':getCookie("csrf_access_token")
             }
         })
-        .catch((err) => {
-            console.error("Network error:", err);
-            setCurrentUser(null);
-            setIsAuthenticated(false);
-            showToast(
-                "Unable to connect to the server. You have been signed out.",
-                "info"
-            );
-            navigate("/");
-        });
+            .then((res) => {
+                if (res.ok) {
+                    setCurrentUser(null);
+                    setIsAuthenticated(false);
+                    showToast("You have been signed out successfully.");
+                    navigate("/");
+                } else {
+                  res.json().then((errorData)=>{
+
+                      console.warn("Logout error:", errorData);
+                      if (res.status === 401) {
+                          showToast("Your session had already expired.");
+                          navigate("/");
+                      } else {
+                          showToast(
+                              errorData.error || "An error occurred while signing out.",
+                              "error"
+                          );
+                      }
+                  })
+                }
+            })
+            .catch((err) => {
+                console.error("Network error:", err);
+                setCurrentUser(null);
+                setIsAuthenticated(false);
+                showToast(
+                    "Unable to connect to the server. You have been signed out.",
+                    "info"
+                );
+                navigate("/");
+            });
     };
-    
+
     // Render Loading and Error States
     if (loading) return <p>Loading...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
@@ -291,7 +330,7 @@ export default App;
 //             const storedUser = localStorage.getItem('currentUser');
 //             if (token) {
 //                 try {
-//                     const response = await axios.get('http://localhost:5555/auth/validate-token', {
+//                     const response = await axios.get('/auth/validate-token', {
 //                         headers: { Authorization: `Bearer ${token}` },
 //                     });
 // 

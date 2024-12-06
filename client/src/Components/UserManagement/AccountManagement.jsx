@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
+// const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555';
 
 const AccountManagement = ({ userId, onAccountUpdate }) => {
     const [formData, setFormData] = useState({
@@ -18,7 +18,7 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`${API_URL}/users/${userId}`);
+                const response = await axios.get(`/users/${userId}`);
                 setFormData({
                     name: response.data.name || '',
                     email: response.data.email || '',
@@ -47,7 +47,7 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
         setLoading(true);
         try {
             const { name, email } = formData;
-            await axios.patch(`${API_URL}/users/${userId}`, { name, email });
+            await axios.patch(`/users/${userId}`, { name, email });
             toast.success('Account updated successfully!');
             onAccountUpdate();
         } catch (err) {
@@ -64,7 +64,7 @@ const AccountManagement = ({ userId, onAccountUpdate }) => {
 
         setDeleteLoading(true);
         try {
-            await axios.delete(`${API_URL}/users/${userId}`);
+            await axios.delete(`/users/${userId}`);
             toast.success('Account deleted successfully.');
             navigate('/');
         } catch (err) {
