@@ -154,7 +154,14 @@ from dotenv import load_dotenv
 from flask_mail import Mail, Message
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token
 from sqlalchemy.sql import text
-from server.extensions import db, migrate, ma, bcrypt
+
+try:
+    # Attempt import for deployment
+    from server.extensions import db, migrate, ma, bcrypt
+except ModuleNotFoundError:
+    # Fallback for local development
+    from extensions import db, migrate, ma, bcrypt
+
 from datetime import timedelta
 
 # Load environment variables
@@ -167,13 +174,15 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 mail = Mail()
 jwt = JWTManager()
 
-
 def create_app(config_name="default"):
     app = Flask(__name__)
 
     # Load configuration
     from config import config
     app.config.from_object(config[config_name])
+
+    # Ensure instance directory exists
+    os.makedirs("instance", exist_ok=True)
 
     if not app.config.get("SQLALCHEMY_DATABASE_URI"):
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/app.db"
@@ -217,7 +226,6 @@ def create_app(config_name="default"):
     register_routes(app)
 
     return app
-
 
 app = create_app(os.getenv("FLASK_ENV", "default"))
 

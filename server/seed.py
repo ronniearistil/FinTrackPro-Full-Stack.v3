@@ -1,3 +1,6 @@
+os.makedirs("instance", exist_ok=True)
+import os
+
 from random import randint
 from extensions import db
 from app import create_app
