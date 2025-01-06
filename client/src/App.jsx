@@ -48,8 +48,6 @@ const App = () => {
     // Check for token and restore auth state on app load
     useEffect(() => {
         const checkAuth = async () => {
-            // const token = localStorage.getItem('authToken');
-            // if (token) {
             try {
                 const response = await fetch('/auth/validate-token')
 

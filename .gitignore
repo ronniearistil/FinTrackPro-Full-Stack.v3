@@ -1,0 +1,77 @@
+# Ignore environment files
+.env
+.env.*
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Python virtual environments
+.venv/
+venv/
+*.env
+
+# Flask instance folder
+instance/
+
+# Database files
+*.db
+*.sqlite3
+
+# Log files
+*.log
+
+# Static and build directories (common in Flask apps)
+staticfiles/
+media/
+build/
+dist/
+
+# Ignore migrations
+migrations/
+
+# Ignore coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Node.js dependencies
+node_modules/
+
+# React build files
+build/
+dist/
+
+# Package lock files
+package-lock.json
+yarn.lock
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Git-specific files
+*.orig
+*.rej
+
+# Ignore environment files
+server/.env
+
+# Ignore Python cache files
+server/migrations/__pycache__/
+*.pyc
+*.pyo
+
+# Ignore migration environment files
+server/migrations/env.py

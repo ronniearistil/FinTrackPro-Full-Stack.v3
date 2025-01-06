@@ -17,7 +17,7 @@ This project is a full-stack financial management and project tracking applicati
 
 In the **server** directory, you can run:
 
-### `flask run`
+### `python app.py`
 
 Runs the backend server in development mode.  
 The server will start on [http://127.0.0.1:5555](http://127.0.0.1:5555).

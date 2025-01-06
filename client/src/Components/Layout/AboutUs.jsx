@@ -7,29 +7,39 @@ const AboutUs = () => {
 
     return (
         <Container maxWidth="md" sx={{ padding: '2rem 0', textAlign: 'center' }}>
-            <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
-                About Us
+            <Typography variant="h1" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
+                About FinTrackPro
             </Typography>
-            <Typography variant="body1" paragraph>
-                At FinTrackPro, we specialize in building seamless project forecasting, budgeting,
-                and expense management solutions. Our mission is to help professionals and businesses
-                streamline financial management with easy-to-use tools that promote data-driven decisions.
+            <Typography variant="h5" paragraph>
+                FinTrackPro is a real-time, interactive platform designed to transform how businesses manage 
+                project budgets, forecast expenses, and analyze profitability. It goes beyond basic tracking by 
+                offering advanced analytics, goal-setting tools, and data-driven insights, empowering users to make 
+                strategic financial decisions.
             </Typography>
-            <Typography variant="h4" sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
-                Meet Our Developer
+            
+            <Typography variant="h2" sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
+                For Businesses
             </Typography>
-            <Typography variant="body1" paragraph>
-            The developer behind FinTrackPro is a results-driven software engineer with expertise
-            in Python, Flask, React, JavaScript, SQL, and RESTful APIs. With proven in
-            program management, finance, and accounting—complemented by an MBA and PMP certification—
-            they bring a unique ability to align scalable web applications with business objectives.
+            <Typography variant="h6" paragraph>
+                - Forecast project budgets with precision.
+                - Track expenses and monitor cash flow in real time.
+                - Analyze profitability and generate reports.
+                - Set financial goals and monitor progress.
+                - Collaborate with teams through shared dashboards.
+                - Access insights for data-driven decision-making.
             </Typography>
-            <Typography variant="body1" paragraph>
-            His engineering approach emphasizes collaboration with cross-functional teams in agile
-            environments to streamline workflows and deliver impactful results. Combining technical
-            expertise with business acumen, he focuses on developing solutions that drive efficiency,
-            enhance user experience, and achieve measurable outcomes for clients and organizations.
+
+            <Typography variant="h2" sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
+                About the Developer
             </Typography>
+            <Typography variant="h6" paragraph>
+                Ronnie Aristil is a software engineer with expertise in JavaScript, React, Python, Flask, SQL, and PostgreSQL.
+                He specializes in building scalable web applications and APIs, leveraging SQLAlchemy for efficient database 
+                modeling and data management. With a PMP certification and an MBA in Finance, he combines technical expertise 
+                with business acumen to build software solutions that streamline workflows, improve performance, and drive 
+                impact across diverse industries.
+            </Typography>
+            
             <Button
                 variant="contained"
                 color="primary"
@@ -43,3 +53,6 @@ const AboutUs = () => {
 };
 
 export default AboutUs;
+
+
+

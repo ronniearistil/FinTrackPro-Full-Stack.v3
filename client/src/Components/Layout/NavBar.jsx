@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Box, IconButton, Menu, MenuItem, Typography, InputBase, Select, FormControl } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Toolbar, Typography, Box, Button, Menu, MenuItem, TextField, CircularProgress, List, ListItem, ListItemText, Select, FormControl, IconButton } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { AccountCircle } from '@mui/icons-material';
-import NavLink from './NavLink';
-// **Import useNavigate for navigation**
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = ({
@@ -15,16 +14,18 @@ const NavBar = ({
     isAuthenticated,
     currentUser,
 }) => {
-    const [anchorEl, setAnchorEl] = useState(null);
+    const navigate = useNavigate();
+
+    const [anchorElProjects, setAnchorElProjects] = useState(null);
+    const [anchorElExpenses, setAnchorElExpenses] = useState(null);
+    const [anchorElProfile, setAnchorElProfile] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [status, setStatus] = useState('');
     const [sortOption, setSortOption] = useState('');
+    const [userName, setUserName] = useState('Welcome, Guest');
 
-    // Initialize useNavigate
-    const navigate = useNavigate();
-
-    const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
-    const handleMenuClose = () => setAnchorEl(null);
+    const handleMenuOpen = (setter) => (event) => setter(event.currentTarget);
+    const handleMenuClose = (setter) => () => setter(null);
 
     const handleSearchChange = (e) => {
         const value = e.target.value;
@@ -44,51 +45,61 @@ const NavBar = ({
         onSort(value);
     };
 
+    useEffect(() => {
+        setUserName(isAuthenticated ? `Welcome, ${currentUser?.name || 'User'}!` : 'Welcome, Guest');
+    }, [isAuthenticated, currentUser]);
+
     return (
-        <AppBar position="static" sx={{ bgcolor: '#2a9d8f', mb: 2 }}>
-            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
-                {/* Navigation Links */}
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                    <NavLink to="/projects">Projects</NavLink>
-                    <NavLink to="/projects/new">Add Project</NavLink>
-                    <NavLink to="/expenses">Expenses</NavLink>
-                    <NavLink to="/expenses/new">Add Expense</NavLink>
-                    <NavLink to="/about">About Us</NavLink>
+        <AppBar position="static" sx={{ mb: 2 }}>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 4 }}>
+                <Box sx={{ display: 'flex', gap: 4 }}>
+                    <Button onClick={() => navigate('/about')} sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.5rem' }}>About</Button>
+
+                    <Button
+                        onClick={handleMenuOpen(setAnchorElProjects)}
+                        sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.5rem' }}
+                    >
+                        Projects
+                    </Button>
+                    <Menu anchorEl={anchorElProjects} open={Boolean(anchorElProjects)} onClose={handleMenuClose(setAnchorElProjects)}>
+                        <MenuItem onClick={() => navigate('/projects')}>View All Projects</MenuItem>
+                        <MenuItem onClick={() => navigate('/projects/new')}>Add Project</MenuItem>
+                    </Menu>
+
+                    <Button
+                        onClick={handleMenuOpen(setAnchorElExpenses)}
+                        sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.5rem' }}
+                    >
+                        Expenses
+                    </Button>
+                    <Menu anchorEl={anchorElExpenses} open={Boolean(anchorElExpenses)} onClose={handleMenuClose(setAnchorElExpenses)}>
+                        <MenuItem onClick={() => navigate('/expenses')}>View All Expenses</MenuItem>
+                        <MenuItem onClick={() => navigate('/expenses/new')}>Add Expense</MenuItem>
+                    </Menu>
                 </Box>
 
-                {/* Search, Filter, and Sort */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        flexGrow: 1,
-                        justifyContent: 'center',
-                    }}
-                >
-                    <InputBase
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
+                    <TextField
+                        variant="outlined"
                         placeholder="Search by name or ID..."
                         value={searchTerm}
                         onChange={handleSearchChange}
                         sx={{
-                            bgcolor: 'white',
-                            borderRadius: 1,
-                            px: 1,
-                            width: '450px',
-                            border: '2px solid #1bc0ad',
-                            '&:focus': { borderColor: '#188f87' },
+                            backgroundColor: 'white',
+                            borderRadius: '4px',
+                            width: '300px',
+                            fontSize: '1rem'
                         }}
                     />
-
                     <FormControl sx={{ minWidth: 150 }}>
                         <Select
                             displayEmpty
                             value={status}
                             onChange={handleStatusChange}
-                            sx={{ bgcolor: 'white', borderRadius: 1 }}
+                            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
                         >
                             <MenuItem value="">
-                                <em>Filter projects by status</em>
+                                <em>Filter by status</em>
                             </MenuItem>
                             <MenuItem value="In Progress">In Progress</MenuItem>
                             <MenuItem value="Completed">Completed</MenuItem>
@@ -102,52 +113,29 @@ const NavBar = ({
                             displayEmpty
                             value={sortOption}
                             onChange={handleSortChange}
-                            sx={{ bgcolor: 'white', borderRadius: 1 }}
+                            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
                         >
                             <MenuItem value="">
-                                <em>Sort projects by</em>
+                                <em>Sort by</em>
                             </MenuItem>
                             <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
                             <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
                             <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
                             <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
-                            <MenuItem value="costHigh">Cost (High to Low)</MenuItem>
-                            <MenuItem value="costLow">Cost (Low to High)</MenuItem>
                         </Select>
                     </FormControl>
                 </Box>
 
-                {/* User Account Menu */}
-                <Box>
-                    <Typography sx={{ mr: 2, color: 'white', fontWeight: 'bold' }}>
-                        {isAuthenticated ? `Welcome, ${currentUser?.name || 'User'}!` : 'Welcome to FinTrackPro, Please Login!'}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                        {userName}
                     </Typography>
-
-                    <IconButton onClick={handleMenuOpen}>
+                    <IconButton onClick={handleMenuOpen(setAnchorElProfile)}>
                         <AccountCircle fontSize="large" sx={{ color: 'white' }} />
                     </IconButton>
-                    <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                    >
-                        {/* Options for unauthenticated users */}
-                        {!isAuthenticated && (
-                            <>
-                                <MenuItem onClick={onSignUp}>Sign Up</MenuItem>
-                                <MenuItem onClick={onLogin}>Sign In</MenuItem>
-                                {/* Added: Account Recovery */}
-                                <MenuItem onClick={() => navigate('/account/recovery')}>Recover Account</MenuItem>
-                            </>
-                        )}
-
-                        {/* Options for authenticated users */}
-                        {isAuthenticated && (
-                            <>
-                                <MenuItem onClick={() => navigate('/account')}>Manage Account</MenuItem>
-                                <MenuItem onClick={onSignOut}>Logout</MenuItem>
-                            </>
-                        )}
+                    <Menu anchorEl={anchorElProfile} open={Boolean(anchorElProfile)} onClose={handleMenuClose(setAnchorElProfile)}>
+                        <MenuItem onClick={() => navigate('/account')}>Account Settings</MenuItem>
+                        <MenuItem onClick={onSignOut}>Logout</MenuItem>
                     </Menu>
                 </Box>
             </Toolbar>
@@ -156,3 +144,7 @@ const NavBar = ({
 };
 
 export default NavBar;
+
+
+
+
