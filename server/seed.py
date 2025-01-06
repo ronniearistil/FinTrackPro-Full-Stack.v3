@@ -1,5 +1,5 @@
-os.makedirs("instance", exist_ok=True)
-import os
+# os.makedirs("instance", exist_ok=True)
+# import os
 
 from random import randint
 from extensions import db
