@@ -138,6 +138,8 @@ def create_app(config_name="default"):
     return app
 
 
+app = create_app(os.getenv("FLASK_ENV", "default"))
+
 if __name__ == "__main__":
-    app = create_app(os.getenv("FLASK_ENV", "default"))
     app.run(debug=app.config["DEBUG"], port=int(os.getenv("PORT", 5555)))
+
