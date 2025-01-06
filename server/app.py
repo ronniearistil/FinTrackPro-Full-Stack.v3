@@ -1,6 +1,6 @@
 import os
 import sys
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from flask_mail import Mail, Message
@@ -26,9 +26,8 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 mail = Mail()
 jwt = JWTManager()
 
-
 def create_app(config_name="default"):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../client/build", static_url_path="/")
 
     # Load configuration
     from config import config
@@ -75,6 +74,15 @@ def create_app(config_name="default"):
         except Exception as e:
             return {"error": "Database connection failed", "details": str(e)}, 500
 
+    # Serve React frontend
+    @app.route("/<path:path>")
+    def serve_frontend(path):
+        return send_from_directory(app.static_folder, path)
+
+    @app.route("/")
+    def serve_index():
+        return send_from_directory(app.static_folder, "index.html")
+
     # Test email route
     @app.route("/test-email", methods=["POST"])
     def test_email():
@@ -112,7 +120,6 @@ def create_app(config_name="default"):
                 secure=secure,
                 samesite="None" if not secure else "Lax",
                 max_age=3600  # 1 hour expiration
-
             )
             response.set_cookie(
                 "refresh_token",
@@ -146,11 +153,11 @@ def create_app(config_name="default"):
 
     return app
 
-
 app = create_app(os.getenv("FLASK_ENV", "default"))
 
 if __name__ == "__main__":
     app.run(debug=app.config["DEBUG"], port=int(os.getenv("PORT", 5555)))
+
 
 
 
