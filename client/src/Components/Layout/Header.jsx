@@ -15,7 +15,7 @@ const Header = () => (
       <Typography
         variant="h1"
         sx={{
-          fontSize: '6.5rem',
+          fontSize: '4rem',
           fontWeight: 'bold', // Bold text
           color: '#2a9d8f', // Optional color matching the theme
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', // Subtle shadow

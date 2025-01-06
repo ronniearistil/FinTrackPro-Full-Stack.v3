@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { AppBar, Toolbar, Typography, Box, Button, Menu, MenuItem, TextField, CircularProgress, List, ListItem, ListItemText, Select, FormControl, IconButton } from '@mui/material';
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Box,
+    Button,
+    Menu,
+    MenuItem,
+    TextField,
+    Select,
+    FormControl,
+    IconButton,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { AccountCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -46,14 +58,16 @@ const NavBar = ({
     };
 
     useEffect(() => {
-        setUserName(isAuthenticated ? `Welcome, ${currentUser?.name || 'User'}!` : 'Welcome, Guest');
+        setUserName(isAuthenticated ? `Welcome Back, ${currentUser?.name || 'User'}!` : 'Welcome, Please Login');
     }, [isAuthenticated, currentUser]);
 
     return (
         <AppBar position="static" sx={{ mb: 2 }}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 4 }}>
                 <Box sx={{ display: 'flex', gap: 4 }}>
-                    <Button onClick={() => navigate('/about')} sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.5rem' }}>About</Button>
+                    <Button onClick={() => navigate('/about')} sx={{ color: 'white', fontWeight: 'bold', fontSize: '1.5rem' }}>
+                        About
+                    </Button>
 
                     <Button
                         onClick={handleMenuOpen(setAnchorElProjects)}
@@ -134,8 +148,18 @@ const NavBar = ({
                         <AccountCircle fontSize="large" sx={{ color: 'white' }} />
                     </IconButton>
                     <Menu anchorEl={anchorElProfile} open={Boolean(anchorElProfile)} onClose={handleMenuClose(setAnchorElProfile)}>
-                        <MenuItem onClick={() => navigate('/account')}>Account Settings</MenuItem>
-                        <MenuItem onClick={onSignOut}>Logout</MenuItem>
+                        {!isAuthenticated && (
+                            <>
+                                <MenuItem onClick={onSignUp}>Sign Up</MenuItem>
+                                <MenuItem onClick={onLogin}>Sign In</MenuItem>
+                            </>
+                        )}
+                        {isAuthenticated && (
+                            <>
+                                <MenuItem onClick={() => navigate('/account')}>Account Settings</MenuItem>
+                                <MenuItem onClick={onSignOut}>Logout</MenuItem>
+                            </>
+                        )}
                     </Menu>
                 </Box>
             </Toolbar>
@@ -144,6 +168,7 @@ const NavBar = ({
 };
 
 export default NavBar;
+
 
 
 
