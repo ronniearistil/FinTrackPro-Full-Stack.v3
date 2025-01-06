@@ -26,6 +26,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 mail = Mail()
 jwt = JWTManager()
 
+
 def create_app(config_name="default"):
     app = Flask(__name__, static_folder="../client/build", static_url_path="/")
 
@@ -65,8 +66,17 @@ def create_app(config_name="default"):
     CORS_ALLOWED_ORIGINS = app.config.get("CORS_ALLOWED_ORIGINS", "http://localhost:3001")
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": CORS_ALLOWED_ORIGINS}})
 
+    # Serve React frontend build files
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def serve_react_app(path):
+        if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+            return send_from_directory(app.static_folder, path)
+        else:
+            return send_from_directory(app.static_folder, "index.html")
+
     # Health check route
-    @app.route("/")
+    @app.route("/api")
     def home():
         try:
             db.session.execute(text("SELECT 1"))
@@ -74,17 +84,8 @@ def create_app(config_name="default"):
         except Exception as e:
             return {"error": "Database connection failed", "details": str(e)}, 500
 
-    # Serve React frontend
-    @app.route("/<path:path>")
-    def serve_frontend(path):
-        return send_from_directory(app.static_folder, path)
-
-    @app.route("/")
-    def serve_index():
-        return send_from_directory(app.static_folder, "index.html")
-
     # Test email route
-    @app.route("/test-email", methods=["POST"])
+    @app.route("/api/test-email", methods=["POST"])
     def test_email():
         try:
             data = request.get_json()
@@ -101,7 +102,7 @@ def create_app(config_name="default"):
             return {"error": "Failed to send test email", "details": str(e)}, 500
 
     # Test JWT route
-    @app.route("/generate-token", methods=["POST"])
+    @app.route("/api/generate-token", methods=["POST"])
     def generate_token():
         try:
             data = request.get_json()
@@ -135,7 +136,7 @@ def create_app(config_name="default"):
             return {"error": "Failed to generate token", "details": str(e)}, 500
 
     # Inspect cookies route (for debugging purposes)
-    @app.route("/inspect-cookies", methods=["GET"])
+    @app.route("/api/inspect-cookies", methods=["GET"])
     def inspect_cookies():
         try:
             access_token = request.cookies.get("access_token")
@@ -153,10 +154,12 @@ def create_app(config_name="default"):
 
     return app
 
+
 app = create_app(os.getenv("FLASK_ENV", "default"))
 
 if __name__ == "__main__":
     app.run(debug=app.config["DEBUG"], port=int(os.getenv("PORT", 5555)))
+
 
 
 
