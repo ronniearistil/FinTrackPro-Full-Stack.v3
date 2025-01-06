@@ -154,7 +154,7 @@ from dotenv import load_dotenv
 from flask_mail import Mail, Message
 from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token
 from sqlalchemy.sql import text
-from extensions import db, migrate, ma, bcrypt
+from server.extensions import db, migrate, ma, bcrypt
 from datetime import timedelta
 
 # Load environment variables
