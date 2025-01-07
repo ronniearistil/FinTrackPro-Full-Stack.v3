@@ -22,15 +22,30 @@ const ExpenseChart = () => {
         ],
     };
 
+    // Chart options
+    const options = {
+        responsive: true, // Makes the chart responsive
+        maintainAspectRatio: false, // Allows custom aspect ratio or height/width
+        plugins: {
+            legend: {
+                position: 'bottom', // Moves the legend to the bottom for better mobile view
+            },
+            tooltip: {
+                enabled: true,
+            },
+        },
+    };
+
     return (
-        <div style={{ width: '600px', margin: '20px auto' }}>
-            <h3>Expense Breakdown</h3>
-            <Doughnut data={expenseData} />
+        <div style={{ width: '100%', height: '400px', margin: '20px auto' }}>
+            <h3 style={{ textAlign: 'center' }}>Expense Breakdown</h3>
+            <Doughnut data={expenseData} options={options} />
         </div>
     );
 };
 
 export default ExpenseChart;
+
 
 
 

@@ -52,16 +52,24 @@ const ProjectChart = () => {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'auto', gap: '20px', marginTop: '20px' }}>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '30px',
+                margin: '20px',
+            }}
+        >
             {/* Project Pie Chart */}
-            <div style={{ width: '600px', height: '400px' }}>
-                <h3>Project Distribution</h3>
-                <Pie data={projectDataPie} />
+            <div style={{ width: '100%', maxWidth: '500px', height: '300px' }}>
+                <h3 style={{ textAlign: 'center' }}>Project Distribution</h3>
+                <Pie data={projectDataPie} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
 
             {/* Histogram (Bar Chart) */}
-            <div style={{ width: '600px', height: '400px' }}>
-                <h3>Project Budget vs Actual Costs</h3>
+            <div style={{ width: '100%', maxWidth: '600px', height: '400px' }}>
+                <h3 style={{ textAlign: 'center' }}>Project Budget vs Actual Costs</h3>
                 <Bar data={projectDataBar} options={barOptions} />
             </div>
         </div>
@@ -69,6 +77,7 @@ const ProjectChart = () => {
 };
 
 export default ProjectChart;
+
 
 
 
