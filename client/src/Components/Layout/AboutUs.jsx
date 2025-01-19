@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Container, Button, Box, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Typography, Container, Button, Box, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,33 +17,47 @@ const AboutUs = () => {
                 boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
             }}
         >
-            <Typography
-                variant="h3"
+            {/* About FinTrackPro Section in a Box */}
+            <Paper
+                elevation={3}
                 sx={{
-                    fontWeight: 'bold',
-                    marginBottom: '1.5rem',
-                    color: '#2a9d8f',
-                    fontSize: '2.5rem',
+                    padding: '2rem',
+                    textAlign: 'center',
+                    borderRadius: '8px',
+                    backgroundColor: 'white',
+                    marginBottom: '2rem',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                 }}
             >
-                About FinTrackPro
-            </Typography>
-            <Typography
-                variant="h6"
-                paragraph
-                sx={{
-                    lineHeight: 1.8,
-                    color: '#5f6368',
-                    textAlign: 'left',
-                    fontSize: '1.25rem',
-                }}
-            >
-                FinTrackPro is a real-time, interactive platform designed to transform how businesses manage project
-                budgets, forecast expenses, and analyze profitability. It goes beyond basic tracking by offering advanced
-                analytics, goal-setting tools, and data-driven insights, empowering users to make strategic financial
-                decisions.
-            </Typography>
+                <Typography
+                    variant="h3"
+                    sx={{
+                        fontWeight: 'bold',
+                        marginBottom: '1rem',
+                        color: '#2a9d8f',
+                        fontSize: '2.5rem',
+                    }}
+                >
+                    About FinTrackPro
+                </Typography>
+                <Typography
+                    variant="h6"
+                    paragraph
+                    sx={{
+                        lineHeight: 1.8,
+                        color: '#5f6368',
+                        textAlign: 'justify',
+                        fontSize: '1.25rem',
+                    }}
+                >
+                    FinTrackPro is a real-time, interactive platform designed to transform how businesses manage project
+                    budgets, forecast expenses, and analyze profitability. It goes beyond basic tracking by offering
+                    advanced analytics, goal-setting tools, and data-driven insights, empowering users to make strategic
+                    financial decisions.
+                </Typography>
+            </Paper>
 
+            {/* For Businesses Section */}
             <Box
                 sx={{
                     marginTop: '2rem',
@@ -89,6 +103,7 @@ const AboutUs = () => {
                 </List>
             </Box>
 
+            {/* About the Developer Section */}
             <Box
                 sx={{
                     marginTop: '2rem',
@@ -115,7 +130,7 @@ const AboutUs = () => {
                     sx={{
                         lineHeight: 1.8,
                         color: '#5f6368',
-                        textAlign: 'left',
+                        textAlign: 'justify',
                         fontSize: '1.25rem',
                     }}
                 >
@@ -148,6 +163,7 @@ const AboutUs = () => {
 };
 
 export default AboutUs;
+
 
 
 
