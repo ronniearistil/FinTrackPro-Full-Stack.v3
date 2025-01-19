@@ -38,7 +38,7 @@ const AboutUs = () => {
                         fontSize: '2.5rem',
                     }}
                 >
-                    About FinTrackPro
+                    At a Glance
                 </Typography>
                 <Typography
                     variant="h6"
