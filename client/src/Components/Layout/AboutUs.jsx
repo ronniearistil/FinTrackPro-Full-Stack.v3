@@ -1,49 +1,144 @@
 import React from 'react';
-import { Typography, Container, Button } from '@mui/material';
+import { Typography, Container, Button, Box, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useNavigate } from 'react-router-dom';
 
 const AboutUs = () => {
     const navigate = useNavigate();
 
     return (
-        <Container maxWidth="md" sx={{ padding: '2rem 0', textAlign: 'center' }}>
-            <Typography variant="h1" sx={{ fontWeight: 'bold', marginBottom: '1rem' }}>
+        <Container
+            maxWidth="md"
+            sx={{
+                padding: '2rem 1rem',
+                textAlign: 'center',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '8px',
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+            }}
+        >
+            <Typography
+                variant="h3"
+                sx={{
+                    fontWeight: 'bold',
+                    marginBottom: '1.5rem',
+                    color: '#2a9d8f',
+                    fontSize: '2.5rem',
+                }}
+            >
                 About FinTrackPro
             </Typography>
-            <Typography variant="h5" paragraph>
-                FinTrackPro is a real-time, interactive platform designed to transform how businesses manage 
-                project budgets, forecast expenses, and analyze profitability. It goes beyond basic tracking by 
-                offering advanced analytics, goal-setting tools, and data-driven insights, empowering users to make 
-                strategic financial decisions.
-            </Typography>
-            
-            <Typography variant="h2" sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
-                For Businesses
-            </Typography>
-            <Typography variant="h6" paragraph>
-                - Forecast project budgets with precision.
-                - Track expenses and monitor cash flow in real time.
-                - Analyze profitability and generate reports.
-                - Set financial goals and monitor progress.
-                - Collaborate with teams through shared dashboards.
-                - Access insights for data-driven decision-making.
+            <Typography
+                variant="h6"
+                paragraph
+                sx={{
+                    lineHeight: 1.8,
+                    color: '#5f6368',
+                    textAlign: 'justify',
+                    fontSize: '1.25rem',
+                }}
+            >
+                FinTrackPro is a real-time, interactive platform designed to transform how businesses manage project
+                budgets, forecast expenses, and analyze profitability. It goes beyond basic tracking by offering advanced
+                analytics, goal-setting tools, and data-driven insights, empowering users to make strategic financial
+                decisions.
             </Typography>
 
-            <Typography variant="h2" sx={{ marginTop: '2rem', fontWeight: 'bold' }}>
-                About the Developer
-            </Typography>
-            <Typography variant="h6" paragraph>
-                Ronnie Aristil is a software engineer with expertise in JavaScript, React, Python, Flask, SQL, and PostgreSQL.
-                He specializes in building scalable web applications and APIs, leveraging SQLAlchemy for efficient database 
-                modeling and data management. With a PMP certification and an MBA in Finance, he combines technical expertise 
-                with business acumen to build software solutions that streamline workflows, improve performance, and drive 
-                impact across diverse industries.
-            </Typography>
-            
+            <Box
+                sx={{
+                    marginTop: '2rem',
+                    padding: '1.5rem',
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        marginBottom: '1rem',
+                        color: '#2a9d8f',
+                        fontSize: '2rem',
+                    }}
+                >
+                    For Businesses
+                </Typography>
+                <List>
+                    {[
+                        'Forecast project budgets with precision.',
+                        'Track expenses and monitor cash flow in real time.',
+                        'Analyze profitability and generate reports.',
+                        'Set financial goals and monitor progress.',
+                        'Collaborate with teams through shared dashboards.',
+                        'Access insights for data-driven decision-making.',
+                    ].map((text, index) => (
+                        <ListItem key={index}>
+                            <ListItemIcon>
+                                <CheckCircleIcon sx={{ color: '#2a9d8f', fontSize: '1.5rem' }} />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={text}
+                                primaryTypographyProps={{
+                                    fontSize: '1.2rem',
+                                    color: '#5f6368',
+                                }}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+
+            <Box
+                sx={{
+                    marginTop: '2rem',
+                    padding: '1.5rem',
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                }}
+            >
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        marginBottom: '1rem',
+                        color: '#2a9d8f',
+                        fontSize: '2rem',
+                    }}
+                >
+                    About the Developer
+                </Typography>
+                <Typography
+                    variant="body1"
+                    paragraph
+                    sx={{
+                        lineHeight: 1.8,
+                        color: '#5f6368',
+                        textAlign: 'justify',
+                        fontSize: '1.25rem',
+                    }}
+                >
+                    Ronnie Aristil is a software engineer with expertise in JavaScript, React, Python, Flask, SQL, and
+                    PostgreSQL. He specializes in building scalable web applications and APIs, leveraging SQLAlchemy for
+                    efficient database modeling and data management. With a PMP certification and an MBA in Finance, he
+                    combines technical expertise with business acumen to build software solutions that streamline workflows,
+                    improve performance, and drive impact across diverse industries.
+                </Typography>
+            </Box>
+
             <Button
                 variant="contained"
                 color="primary"
-                sx={{ marginTop: '2rem' }}
+                sx={{
+                    marginTop: '2rem',
+                    backgroundColor: '#2a9d8f',
+                    '&:hover': {
+                        backgroundColor: '#21867a',
+                    },
+                    fontSize: '1.2rem',
+                    padding: '0.75rem 1.5rem',
+                }}
                 onClick={() => navigate('/')}
             >
                 Back to Home
@@ -53,6 +148,8 @@ const AboutUs = () => {
 };
 
 export default AboutUs;
+
+
 
 
 
