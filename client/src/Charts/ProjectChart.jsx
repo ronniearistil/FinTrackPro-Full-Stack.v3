@@ -25,21 +25,21 @@ const ProjectChart = () => {
         ],
     };
 
-    const projectDataBar = {
-        labels: ['Project A', 'Project B', 'Project C'],
-        datasets: [
-            {
-                label: 'Budgeted Cost',
-                data: [20000, 15000, 30000],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            },
-            {
-                label: 'Actual Cost',
-                data: [18000, 16000, 28000],
-                backgroundColor: 'rgba(255, 99, 132, 0.6)',
-            },
-        ],
-    };
+    // // const projectDataBar = {
+    //     labels: ['Project A', 'Project B', 'Project C'],
+    //     datasets: [
+    //         {
+    //             label: 'Budgeted Cost',
+    //             data: [20000, 15000, 30000],
+    //             backgroundColor: 'rgba(75, 192, 192, 0.6)',
+    //         },
+    //         {
+    //             label: 'Actual Cost',
+    //             data: [18000, 16000, 28000],
+    //             backgroundColor: 'rgba(255, 99, 132, 0.6)',
+    //         },
+    //     ],
+    // };
 
     const barOptions = {
         responsive: true,
@@ -67,11 +67,11 @@ const ProjectChart = () => {
                 <Pie data={projectDataPie} options={{ responsive: true, maintainAspectRatio: false }} />
             </div>
 
-            {/* Histogram (Bar Chart) */}
+            {/* Histogram (Bar Chart)
             <div style={{ width: '100%', maxWidth: '600px', height: '400px' }}>
                 <h3 style={{ textAlign: 'center' }}>Project Budget vs Actual Costs</h3>
                 <Bar data={projectDataBar} options={barOptions} />
-            </div>
+            </div> */}
         </div>
     );
 };
