@@ -13,9 +13,9 @@ const Header = () => (
   >
     <Link to="/" style={{ textDecoration: 'none' }}> {/* Ensure the header redirects to the homepage */}
       <Typography
-        variant="h1"
+        variant="h3"
         sx={{
-          fontSize: '4rem',
+          fontSize: '3rem',
           fontWeight: 'bold', // Bold text
           color: '#2a9d8f', // Optional color matching the theme
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', // Subtle shadow
