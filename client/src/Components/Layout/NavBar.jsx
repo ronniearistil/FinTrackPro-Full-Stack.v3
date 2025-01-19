@@ -166,21 +166,21 @@ const NavBar = ({
         sx={{
             display: 'flex',
             alignItems: 'center',
-            flexWrap: { xs: 'wrap', md: 'nowrap' }, // Wrap on smaller screens
-            justifyContent: { xs: 'center', md: 'flex-start' }, // Center items on smaller screens
-            gap: 2,
-            position: { xs: 'fixed', md: 'relative' }, // Make the search bar fixed for mobile
+            justifyContent: 'space-between', // Ensures items are spaced evenly
+            flexWrap: { xs: 'wrap', md: 'nowrap' }, // Wrap items on smaller screens
+            gap: 1, // Adjusted for tighter spacing
+            position: { xs: 'absolute', md: 'relative' },
             top: { xs: '70px', md: 'auto' },
-            left: { xs: '50%', md: 'auto' },
-            transform: { xs: 'translateX(-50%)', md: 'none' },
             backgroundColor: { xs: 'white', md: 'transparent' },
-            padding: { xs: 2, md: 0 },
+            padding: { xs: 1, md: 0 },
             borderRadius: { xs: 2, md: 0 },
-            boxShadow: { xs: '0px 4px 10px rgba(0, 0, 0, 0.1)', md: 'none' },
+            boxShadow: { xs: '0px 4px 6px rgba(0,0,0,0.1)', md: 'none' },
+            flexGrow: 1,
+            width: { xs: '95%', md: 'auto' },
             zIndex: 10,
-            width: { xs: '90%', md: 'auto' },
         }}
     >
+        {/* Search Bar */}
         <TextField
             variant="outlined"
             placeholder="Search..."
@@ -189,14 +189,19 @@ const NavBar = ({
             sx={{
                 backgroundColor: 'white',
                 borderRadius: '4px',
-                width: { xs: '100%', sm: '300px' },
-                maxWidth: '300px',
+                flex: { xs: '1 1 auto', md: '0 0 auto' },
+                minWidth: { xs: '200px', sm: '250px' },
+                width: { xs: '100%', md: 'auto' },
+                marginBottom: { xs: '8px', md: '0' }, // Adds margin for spacing on smaller screens
             }}
         />
+
+        {/* Filter Dropdown */}
         <FormControl
             sx={{
+                flex: { xs: '1 1 auto', md: '0 0 auto' },
                 minWidth: 150,
-                width: { xs: '100%', sm: 'auto' },
+                marginBottom: { xs: '8px', md: '0' },
             }}
         >
             <Select
@@ -207,7 +212,7 @@ const NavBar = ({
                     fontSize: '1rem',
                     bgcolor: 'white',
                     borderRadius: 1,
-                    width: '100%',
+                    width: { xs: '100%', md: '150px' },
                 }}
             >
                 <MenuItem value="">
@@ -219,10 +224,12 @@ const NavBar = ({
                 <MenuItem value="All">All</MenuItem>
             </Select>
         </FormControl>
+
+        {/* Sort Dropdown */}
         <FormControl
             sx={{
+                flex: { xs: '1 1 auto', md: '0 0 auto' },
                 minWidth: 150,
-                width: { xs: '100%', sm: 'auto' },
             }}
         >
             <Select
@@ -233,7 +240,7 @@ const NavBar = ({
                     fontSize: '1rem',
                     bgcolor: 'white',
                     borderRadius: 1,
-                    width: '100%',
+                    width: { xs: '100%', md: '150px' },
                 }}
             >
                 <MenuItem value="">
@@ -297,8 +304,7 @@ export default NavBar;
 
 
 
-
-
+// Test 
 
 
 
