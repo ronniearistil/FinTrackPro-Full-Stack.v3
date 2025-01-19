@@ -20,6 +20,8 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 import { AccountCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -42,6 +44,7 @@ const NavBar = ({
     const [status, setStatus] = useState('');
     const [sortOption, setSortOption] = useState('');
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
 
     const handleMenuOpen = (setter) => (event) => setter(event.currentTarget);
     const handleMenuClose = (setter) => () => setter(null);
@@ -63,6 +66,10 @@ const NavBar = ({
         const value = e.target.value;
         setSortOption(value);
         onSort(value);
+    };
+
+    const toggleSearchBar = () => {
+        setShowSearch((prev) => !prev);
     };
 
     return (
@@ -154,57 +161,78 @@ const NavBar = ({
                 </Box>
 
                 {/* Search, Filter, and Sort */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexGrow: 1 }}>
-                    <TextField
-                        variant="outlined"
-                        placeholder="Search..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
+                {showSearch && (
+                    <Box
                         sx={{
-                            backgroundColor: 'white',
-                            borderRadius: '4px',
-                            width: { xs: '150px', sm: '300px' },
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            position: { xs: 'absolute', md: 'relative' },
+                            top: { xs: '70px', md: 'auto' },
+                            backgroundColor: { xs: 'white', md: 'transparent' },
+                            padding: { xs: 2, md: 0 },
+                            borderRadius: { xs: 2, md: 0 },
+                            flexGrow: 1,
+                            width: { xs: '90%', md: 'auto' },
+                            zIndex: 10,
                         }}
-                    />
-                    <FormControl sx={{ minWidth: 150 }}>
-                        <Select
-                            displayEmpty
-                            value={status}
-                            onChange={handleStatusChange}
-                            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
-                        >
-                            <MenuItem value="">
-                                <em>Filter by status</em>
-                            </MenuItem>
-                            <MenuItem value="In Progress">In Progress</MenuItem>
-                            <MenuItem value="Completed">Completed</MenuItem>
-                            <MenuItem value="At Risk">At Risk</MenuItem>
-                            <MenuItem value="All">All</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl sx={{ minWidth: 150 }}>
-                        <Select
-                            displayEmpty
-                            value={sortOption}
-                            onChange={handleSortChange}
-                            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
-                        >
-                            <MenuItem value="">
-                                <em>Sort by</em>
-                            </MenuItem>
-                            <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
-                            <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
-                            <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
-                            <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Box>
-
-                {/* User Profile */}
+                    >
+                        <TextField
+                            variant="outlined"
+                            placeholder="Search..."
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            sx={{
+                                backgroundColor: 'white',
+                                borderRadius: '4px',
+                                width: { xs: '150px', sm: '300px' },
+                            }}
+                        />
+                        <FormControl sx={{ minWidth: 150 }}>
+                            <Select
+                                displayEmpty
+                                value={status}
+                                onChange={handleStatusChange}
+                                sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
+                            >
+                                <MenuItem value="">
+                                    <em>Filter by status</em>
+                                </MenuItem>
+                                <MenuItem value="In Progress">In Progress</MenuItem>
+                                <MenuItem value="Completed">Completed</MenuItem>
+                                <MenuItem value="At Risk">At Risk</MenuItem>
+                                <MenuItem value="All">All</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ minWidth: 150 }}>
+                            <Select
+                                displayEmpty
+                                value={sortOption}
+                                onChange={handleSortChange}
+                                sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
+                            >
+                                <MenuItem value="">
+                                    <em>Sort by</em>
+                                </MenuItem>
+                                <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
+                                <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
+                                <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
+                                <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
+                )}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {/* Search Bar Toggle */}
+                    <IconButton onClick={toggleSearchBar}>
+                        {showSearch ? <CloseIcon sx={{ color: 'white' }} /> : <SearchIcon sx={{ color: 'white' }} />}
+                    </IconButton>
+
+                    {/* User Profile */}
                     <IconButton onClick={handleMenuOpen(setAnchorElProfile)}>
                         <AccountCircle fontSize="large" sx={{ color: 'white' }} />
                     </IconButton>
+
                     <Menu
                         anchorEl={anchorElProfile}
                         open={Boolean(anchorElProfile)}
@@ -233,12 +261,14 @@ const NavBar = ({
                         )}
                     </Menu>
                 </Box>
+
             </Toolbar>
         </AppBar>
     );
 };
 
 export default NavBar;
+
 
 
 
