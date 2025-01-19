@@ -21,6 +21,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { AccountCircle } from '@mui/icons-material';
+import SearchIcon from '@mui/icons-material/Search'; // Fix: Importing SearchIcon correctly
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = ({
@@ -165,6 +166,13 @@ const NavBar = ({
                             borderRadius: '4px',
                             width: { xs: '150px', sm: '300px' },
                         }}
+                        InputProps={{
+                            endAdornment: (
+                                <IconButton>
+                                    <SearchIcon />
+                                </IconButton>
+                            ),
+                        }}
                     />
                     <FormControl sx={{ minWidth: 150 }}>
                         <Select
@@ -239,6 +247,7 @@ const NavBar = ({
 };
 
 export default NavBar;
+
 
 
 
