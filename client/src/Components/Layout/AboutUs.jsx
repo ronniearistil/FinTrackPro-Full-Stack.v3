@@ -46,7 +46,7 @@ const AboutUs = () => {
                     sx={{
                         lineHeight: 1.8,
                         color: '#5f6368',
-                        textAlign: 'justify',
+                        textAlign: 'left',
                         fontSize: '1.25rem',
                     }}
                 >
@@ -130,7 +130,7 @@ const AboutUs = () => {
                     sx={{
                         lineHeight: 1.8,
                         color: '#5f6368',
-                        textAlign: 'justify',
+                        textAlign: 'left',
                         fontSize: '1.25rem',
                     }}
                 >
