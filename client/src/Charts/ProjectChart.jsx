@@ -1,20 +1,17 @@
 import React from 'react';
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     ArcElement,
-    BarElement,
-    CategoryScale,
-    LinearScale,
     Tooltip,
     Legend,
 } from 'chart.js';
 
 // Register required elements
-ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ProjectChart = () => {
-    const projectDataPie = {
+    const projectData = {
         labels: ['Project A', 'Project B', 'Project C'],
         datasets: [
             {
@@ -25,58 +22,30 @@ const ProjectChart = () => {
         ],
     };
 
-    // // const projectDataBar = {
-    //     labels: ['Project A', 'Project B', 'Project C'],
-    //     datasets: [
-    //         {
-    //             label: 'Budgeted Cost',
-    //             data: [20000, 15000, 30000],
-    //             backgroundColor: 'rgba(75, 192, 192, 0.6)',
-    //         },
-    //         {
-    //             label: 'Actual Cost',
-    //             data: [18000, 16000, 28000],
-    //             backgroundColor: 'rgba(255, 99, 132, 0.6)',
-    //         },
-    //     ],
-    // };
-
-    const barOptions = {
+    const options = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'top',
+                position: 'top', // Ensure the legend is displayed at the top
+                labels: {
+                    font: {
+                        size: 12,
+                    },
+                },
             },
         },
     };
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '30px',
-                margin: '20px',
-            }}
-        >
-            {/* Project Pie Chart */}
-            <div style={{ width: '100%', maxWidth: '500px', height: '300px' }}>
-                <h3 style={{ textAlign: 'center' }}>Project Distribution</h3>
-                <Pie data={projectDataPie} options={{ responsive: true, maintainAspectRatio: false }} />
-            </div>
-
-            {/* Histogram (Bar Chart)
-            <div style={{ width: '100%', maxWidth: '600px', height: '400px' }}>
-                <h3 style={{ textAlign: 'center' }}>Project Budget vs Actual Costs</h3>
-                <Bar data={projectDataBar} options={barOptions} />
-            </div> */}
+        <div style={{ width: '100%', height: '100%' }}>
+            <Pie data={projectData} options={options} />
         </div>
     );
 };
 
 export default ProjectChart;
+
 
 
 

@@ -22,29 +22,30 @@ const ExpenseChart = () => {
         ],
     };
 
-    // Chart options
     const options = {
-        responsive: true, // Makes the chart responsive
-        maintainAspectRatio: false, // Allows custom aspect ratio or height/width
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: 'bottom', // Moves the legend to the bottom for better mobile view
-            },
-            tooltip: {
-                enabled: true,
+                position: 'top', // Ensure the legend is displayed at the top
+                labels: {
+                    font: {
+                        size: 12,
+                    },
+                },
             },
         },
     };
 
     return (
-        <div style={{ width: '100%', height: '400px', margin: '20px auto' }}>
-            <h3 style={{ textAlign: 'center' }}>Expense Breakdown</h3>
+        <div style={{ width: '100%', height: '100%' }}>
             <Doughnut data={expenseData} options={options} />
         </div>
     );
 };
 
 export default ExpenseChart;
+
 
 
 
