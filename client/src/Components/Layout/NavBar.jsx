@@ -161,17 +161,26 @@ const NavBar = ({
                 </Box>
 
 {/* Search, Filter, and Sort */}
-<Box 
-    sx={{ 
-        display: 'flex', 
-        flexDirection: { xs: 'column', sm: 'row' }, 
-        alignItems: { xs: 'flex-start', sm: 'center' }, 
-        gap: 2, 
-        flexGrow: 1 
-    }}
->
-    {/* Search Bar */}
-    {showSearch && (
+{showSearch && (
+    <Box
+        sx={{
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: { xs: 'wrap', md: 'nowrap' }, // Wrap on smaller screens
+            justifyContent: { xs: 'center', md: 'flex-start' }, // Center items on smaller screens
+            gap: 2,
+            position: { xs: 'fixed', md: 'relative' }, // Make the search bar fixed for mobile
+            top: { xs: '70px', md: 'auto' },
+            left: { xs: '50%', md: 'auto' },
+            transform: { xs: 'translateX(-50%)', md: 'none' },
+            backgroundColor: { xs: 'white', md: 'transparent' },
+            padding: { xs: 2, md: 0 },
+            borderRadius: { xs: 2, md: 0 },
+            boxShadow: { xs: '0px 4px 10px rgba(0, 0, 0, 0.1)', md: 'none' },
+            zIndex: 10,
+            width: { xs: '90%', md: 'auto' },
+        }}
+    >
         <TextField
             variant="outlined"
             placeholder="Search..."
@@ -181,47 +190,63 @@ const NavBar = ({
                 backgroundColor: 'white',
                 borderRadius: '4px',
                 width: { xs: '100%', sm: '300px' },
-                marginBottom: { xs: 2, sm: 0 },
+                maxWidth: '300px',
             }}
         />
-    )}
-
-    {/* Filter Dropdown */}
-    <FormControl sx={{ minWidth: 150, width: { xs: '100%', sm: 'auto' } }}>
-        <Select
-            displayEmpty
-            value={status}
-            onChange={handleStatusChange}
-            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
+        <FormControl
+            sx={{
+                minWidth: 150,
+                width: { xs: '100%', sm: 'auto' },
+            }}
         >
-            <MenuItem value="">
-                <em>Filter by status</em>
-            </MenuItem>
-            <MenuItem value="In Progress">In Progress</MenuItem>
-            <MenuItem value="Completed">Completed</MenuItem>
-            <MenuItem value="At Risk">At Risk</MenuItem>
-            <MenuItem value="All">All</MenuItem>
-        </Select>
-    </FormControl>
-
-    {/* Sort Dropdown */}
-    <FormControl sx={{ minWidth: 150, width: { xs: '100%', sm: 'auto' } }}>
-        <Select
-            displayEmpty
-            value={sortOption}
-            onChange={handleSortChange}
-            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
+            <Select
+                displayEmpty
+                value={status}
+                onChange={handleStatusChange}
+                sx={{
+                    fontSize: '1rem',
+                    bgcolor: 'white',
+                    borderRadius: 1,
+                    width: '100%',
+                }}
+            >
+                <MenuItem value="">
+                    <em>Filter by status</em>
+                </MenuItem>
+                <MenuItem value="In Progress">In Progress</MenuItem>
+                <MenuItem value="Completed">Completed</MenuItem>
+                <MenuItem value="At Risk">At Risk</MenuItem>
+                <MenuItem value="All">All</MenuItem>
+            </Select>
+        </FormControl>
+        <FormControl
+            sx={{
+                minWidth: 150,
+                width: { xs: '100%', sm: 'auto' },
+            }}
         >
-            <MenuItem value="">
-                <em>Sort by</em>
-            </MenuItem>
-            <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
-            <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
-            <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
-            <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
-        </Select>
-    </FormControl>
-</Box>
+            <Select
+                displayEmpty
+                value={sortOption}
+                onChange={handleSortChange}
+                sx={{
+                    fontSize: '1rem',
+                    bgcolor: 'white',
+                    borderRadius: 1,
+                    width: '100%',
+                }}
+            >
+                <MenuItem value="">
+                    <em>Sort by</em>
+                </MenuItem>
+                <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
+                <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
+                <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
+                <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
+            </Select>
+        </FormControl>
+    </Box>
+)}
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {/* Search Bar Toggle */}
