@@ -160,68 +160,69 @@ const NavBar = ({
                     </Menu>
                 </Box>
 
-                {/* Search, Filter, and Sort */}
-                {showSearch && (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            position: { xs: 'absolute', md: 'relative' },
-                            top: { xs: '70px', md: 'auto' },
-                            backgroundColor: { xs: 'white', md: 'transparent' },
-                            padding: { xs: 2, md: 0 },
-                            borderRadius: { xs: 2, md: 0 },
-                            flexGrow: 1,
-                            width: { xs: '90%', md: 'auto' },
-                            zIndex: 10,
-                        }}
-                    >
-                        <TextField
-                            variant="outlined"
-                            placeholder="Search..."
-                            value={searchTerm}
-                            onChange={handleSearchChange}
-                            sx={{
-                                backgroundColor: 'white',
-                                borderRadius: '4px',
-                                width: { xs: '150px', sm: '300px' },
-                            }}
-                        />
-                        <FormControl sx={{ minWidth: 150 }}>
-                            <Select
-                                displayEmpty
-                                value={status}
-                                onChange={handleStatusChange}
-                                sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
-                            >
-                                <MenuItem value="">
-                                    <em>Filter by status</em>
-                                </MenuItem>
-                                <MenuItem value="In Progress">In Progress</MenuItem>
-                                <MenuItem value="Completed">Completed</MenuItem>
-                                <MenuItem value="At Risk">At Risk</MenuItem>
-                                <MenuItem value="All">All</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <FormControl sx={{ minWidth: 150 }}>
-                            <Select
-                                displayEmpty
-                                value={sortOption}
-                                onChange={handleSortChange}
-                                sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
-                            >
-                                <MenuItem value="">
-                                    <em>Sort by</em>
-                                </MenuItem>
-                                <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
-                                <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
-                                <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
-                                <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Box>
-                )}
+{/* Search, Filter, and Sort */}
+<Box 
+    sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' }, 
+        alignItems: { xs: 'flex-start', sm: 'center' }, 
+        gap: 2, 
+        flexGrow: 1 
+    }}
+>
+    {/* Search Bar */}
+    {showSearch && (
+        <TextField
+            variant="outlined"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            sx={{
+                backgroundColor: 'white',
+                borderRadius: '4px',
+                width: { xs: '100%', sm: '300px' },
+                marginBottom: { xs: 2, sm: 0 },
+            }}
+        />
+    )}
+
+    {/* Filter Dropdown */}
+    <FormControl sx={{ minWidth: 150, width: { xs: '100%', sm: 'auto' } }}>
+        <Select
+            displayEmpty
+            value={status}
+            onChange={handleStatusChange}
+            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
+        >
+            <MenuItem value="">
+                <em>Filter by status</em>
+            </MenuItem>
+            <MenuItem value="In Progress">In Progress</MenuItem>
+            <MenuItem value="Completed">Completed</MenuItem>
+            <MenuItem value="At Risk">At Risk</MenuItem>
+            <MenuItem value="All">All</MenuItem>
+        </Select>
+    </FormControl>
+
+    {/* Sort Dropdown */}
+    <FormControl sx={{ minWidth: 150, width: { xs: '100%', sm: 'auto' } }}>
+        <Select
+            displayEmpty
+            value={sortOption}
+            onChange={handleSortChange}
+            sx={{ fontSize: '1rem', bgcolor: 'white', borderRadius: 1 }}
+        >
+            <MenuItem value="">
+                <em>Sort by</em>
+            </MenuItem>
+            <MenuItem value="nameAsc">Name (A-Z)</MenuItem>
+            <MenuItem value="nameDesc">Name (Z-A)</MenuItem>
+            <MenuItem value="profitHigh">Profit (High to Low)</MenuItem>
+            <MenuItem value="profitLow">Profit (Low to High)</MenuItem>
+        </Select>
+    </FormControl>
+</Box>
+
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {/* Search Bar Toggle */}
                     <IconButton onClick={toggleSearchBar}>

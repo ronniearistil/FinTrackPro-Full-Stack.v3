@@ -224,7 +224,7 @@ const App = () => {
                         <Route path="/account/recovery" element={<AccountRecovery />} />
                         <Route path="*" element={<h2>Page Not Found</h2>} />
                     </Routes>
-                    <Footer />
+                    {/* <Footer /> */}
                 </div>
             </ProjectProvider>
         </ThemeProvider>
